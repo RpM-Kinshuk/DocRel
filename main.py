@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, url_for
 import requests
+import logging
 import pandas as pd
 import httpx
 import time
@@ -133,5 +134,23 @@ def get_progress():
     global progress
     return jsonify({'progress': progress})
 
+class IgnoreSpecificLogsFilter(logging.Filter):
+    def filter(self, record):
+        # Filter out specific HTTP request patterns
+        if "GET /progress" in record.getMessage() or \
+           "GET https://api.elsevier.com/content/abstract/doi/" in record.getMessage():
+            return False
+        return True
+
 if __name__ == '__main__':
+    # Configure logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)  # Set the overall logging level
+    
+    # Add a filter to the default handler
+    handler = logging.StreamHandler()
+    handler.addFilter(IgnoreSpecificLogsFilter())
+    logger.addHandler(handler)
+    
     app.run(debug=True)
+

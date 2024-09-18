@@ -1,45 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Semantic Analysis</title>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/semantic">Semantic Analysis</a></li>
-        </ul>
-    </nav>
+{% extends 'base.html' %}
 
+{% block title %}Semantic Analysis{% endblock %}
+
+{% block content %}
     <h1>Semantic Analysis</h1>
     <form id="semantic-form">
-        <label for="query">Enter a query:</label>
-        <input type="text" id="query" name="query" required><br>
+        <div class="form-group">
+            <label for="query">Enter a query:</label>
+            <input type="text" id="query" name="query" required>
+        </div>
         
-        <button type="submit">Analyze</button>
+        <button type="submit" class="btn-submit">Analyze</button>
     </form>
 
     <div id="semantic-results"></div>
-
-    <script>
-        document.getElementById('semantic-form').onsubmit = function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            fetch('/semantic', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('semantic-results');
-                resultsDiv.innerHTML = '<h2>Top Results</h2><ul>' + data.results.map(item => `<li>${item}</li>`).join('') + '</ul>';
-            });
-        };
-    </script>
-</body>
-</html>
+{% endblock %}

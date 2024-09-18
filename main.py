@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 import requests
 import pandas as pd
 import httpx
@@ -42,7 +42,7 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
         items_per_page = int(data.get('search-results', {}).get('opensearch:itemsPerPage', 0))
 
         # Update progress
-        progress_step = 50 / (results_per_year * total_years)  # Allocate 50% of progress to data fetching
+        progress_step = 50 / (results_per_year * total_years)
         progress = min(100, progress + progress_step)
 
         if start_index + items_per_page >= total_results or len(results) >= results_per_year:
@@ -84,14 +84,11 @@ def index():
 def semantic():
     if request.method == 'POST':
         query = request.form['query']
-        # Placeholder for semantic similarity analysis using a deep learning model
         top_results = perform_semantic_analysis(query)
         return jsonify({'results': top_results})
     return render_template('semantic.html')
 
 def perform_semantic_analysis(query):
-    # Placeholder: Implement your deep learning model for semantic similarity here
-    # For now, let's return mock results
     mock_results = ['Result 1', 'Result 2', 'Result 3']
     return mock_results
 

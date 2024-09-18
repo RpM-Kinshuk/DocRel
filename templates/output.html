@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    Hello, it is {{month}} {{day}} and the temperature is {{temp}} degrees Celsius.
+    <br> <br>
+    The specific humidity is {{sphum}} and the relative humidity is {{relhum}}.
+    <br> <br>
+    <b>The predicted rainfall is {{rainfall}} mm.</b>
+    <br>
+    Wish to get the data emailed to you? <a href="{{url_for('ren_mail')}}">Click here</a> to enter your email address.
+    
+{% endblock %}

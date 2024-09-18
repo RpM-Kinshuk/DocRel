@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <form action = "/output" method = "post">
+        <input required autocomplete ="off" type="text" name="name" placeholder="Enter Temperature">
+        <input type="submit" value="Calculate">
+    </form>
+
+{% endblock %}

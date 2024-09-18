@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <form action = "/Sent" method = "post">
+        <input required autocomplete ="off" type="text" name="remail" placeholder="Enter your Email Address">
+        <input type="submit" value="Send">
+    </form>
+
+{% endblock %}

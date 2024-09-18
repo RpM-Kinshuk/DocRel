@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Scopus Data Fetcher</title>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/semantic">Semantic Analysis</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Scopus Data Fetcher</h1>
+        <form id="fetch-form">
+            <div class="form-group">
+                <label for="keywords">Keywords (comma-separated):</label>
+                <input type="text" id="keywords" name="keywords" placeholder="e.g., environmental sustainability, sustainable development" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="start_year">Start Year:</label>
+                <input type="number" id="start_year" name="start_year" placeholder="e.g., 2010" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="end_year">End Year:</label>
+                <input type="number" id="end_year" name="end_year" placeholder="e.g., 2022" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="results_per_year">Results Per Year:</label>
+                <input type="number" id="results_per_year" name="results_per_year" placeholder="e.g., 150" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">Fetch Data</button>
+        </form>
+
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <p id="message" class="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('fetch-form').onsubmit = function(e) {
+            e.preventDefault();
+            document.getElementById('message').textContent = '';
+            document.getElementById('progress-bar').style.width = '0%';
+
+            const formData = new FormData(this);
+
+            fetch('/fetch', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').textContent = data.message;
+            });
+
+            const interval = setInterval(() => {
+                fetch('/progress')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('progress-bar').style.width = data.progress + '%';
+                    if (data.progress >= 100) {
+                        clearInterval(interval);
+                    }
+                });
+            }, 300);
+        };
+    </script>
+</body>
+</html>

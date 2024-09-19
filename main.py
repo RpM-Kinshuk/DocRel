@@ -32,6 +32,7 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
     
     while True:
         response = requests.get(BASE_URL, headers=HEADERS, params=params)
+        # print(f"Request URL: {response.url}") 
         if response.status_code != 200:
             print(f"Error: {response.status_code}")
             break

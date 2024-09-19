@@ -37,9 +37,9 @@
     <button type="submit" class="btn-submit">Analyze</button>
 </form>
 <br> <br>
-<div id="loading" style="display: none;">Loading...</div>
-
 <div id="semantic-results"></div>
+<div id="loading" style="display: none;"></div>
+<button id="send-results" style="display: none;">Send Results</button>
 
 <script>
     document.getElementById('semantic-form').addEventListener('submit', function (event) {
@@ -64,7 +64,7 @@
                 loadingElement.style.display = 'none';
 
                 const results = data.results;
-                if (results.length > 0) {
+                if (results.length > 0) { 
                     const title = document.createElement('h2');
                     title.textContent = 'Results:';
                     resultsContainer.appendChild(title);
@@ -95,6 +95,8 @@
                         card.appendChild(linkElement);
                         resultsContainer.appendChild(card);
                     });
+                    const sendButton = document.getElementById('send-results');
+                    sendButton.style.display = 'block';
                 } else {
                     resultsContainer.textContent = 'No results found';
                 }
@@ -104,6 +106,10 @@
                 console.error('Error:', error);
                 loadingElement.style.display = 'none'; // Hide spinner on error
             });
+    });
+
+    document.getElementById('send-results').addEventListener('click', function () {
+        window.location.href = '/mail';
     });
 
 </script>

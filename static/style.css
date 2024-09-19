@@ -278,3 +278,27 @@ form {
     color: #0056b3; /* Title color */
     font-size: 24px; /* Larger title */
 }
+
+/* Send Results Button Style */
+#send-results {
+    padding: 12px 20px; /* Padding for the button */
+    background-color: #28a745; /* Green color for the button */
+    color: #fff; /* Text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 18px; /* Font size */
+    font-weight: bold; /* Bold text */
+    transition: background-color 0.3s, transform 0.1s; /* Smooth transition */
+    margin-top: 20px; /* Space above the button */
+}
+
+#send-results:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+#send-results:active {
+    background-color: #1e7e34; /* Even darker on click */
+    transform: scale(0.98); /* Slightly shrink button */
+}
+

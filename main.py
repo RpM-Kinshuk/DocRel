@@ -3,8 +3,8 @@ import httpx
 import logging
 import requests
 import pandas as pd
-from utils.clean import clean_text
 from flask import Flask, render_template, request, jsonify
+from utils.clean import clean_text, IgnoreSpecificLogsFilter
 
 app = Flask(__name__)
 
@@ -106,7 +106,6 @@ def perform_semantic_analysis(query, top_n, model):
     # Return only the top 5 results
     return mock_results[:int(top_n)]
 
-
 @app.route('/fetch', methods=['POST'])
 def fetch():
     global progress
@@ -151,13 +150,9 @@ def get_progress():
     global progress
     return jsonify({'progress': progress})
 
-class IgnoreSpecificLogsFilter(logging.Filter):
-    def filter(self, record):
-        # Filter out specific HTTP request patterns
-        if "GET /progress" in record.getMessage() or \
-           "GET https://api.elsevier.com/content/abstract/doi/" in record.getMessage():
-            return False
-        return True
+@app.route('/about', methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     # Configure logging

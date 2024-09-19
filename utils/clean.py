@@ -15,5 +15,11 @@ def clean_text(df):
     # Handle missing values if necessary
     df.fillna('', inplace=True)
 
+    # Remove @_fa, link columns if they exist
+    if '@_fa' in df.columns:
+        df.drop(columns=['@_fa'], inplace=True)
+    if 'link' in df.columns:
+        df.drop(columns=['link'], inplace=True)
+
     return df
-    # print(f"Saved cleaned records to scopus_results.csv")
+    # print(f"Saved cleaned records to scopus_results.json")

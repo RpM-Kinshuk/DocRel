@@ -22,13 +22,14 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
     global progress
     results = []
     query = ' OR '.join([f'TITLE-ABS-KEY({kw})' for kw in keywords])
+    
     params = {
         'query': f'({query}) AND PUBYEAR = {year}',
-        'count': 25,
+        'count': min(25, results_per_year),  # Use 25 as the max per request
         'start': 0,
         'sort': 'rowTotal'
     }
-
+    
     while True:
         response = requests.get(BASE_URL, headers=HEADERS, params=params)
         if response.status_code != 200:
@@ -47,13 +48,16 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
         progress_step = 50 / (results_per_year * total_years)
         progress = min(100, progress + progress_step)
 
+        # Check if we have retrieved enough results for the year or if we reached the API limits
         if start_index + items_per_page >= total_results or len(results) >= results_per_year:
             break
 
+        # Continue from the next start index
         params['start'] = start_index + items_per_page
-        time.sleep(1)
+        time.sleep(1)  # Sleep to avoid rate-limiting or throttling issues
 
-    return results[:results_per_year]
+    return results[:results_per_year]  # Return only the specified number of results
+
 
 def get_abstract(doi, api_key, max_retries=3, backoff_factor=0.3):
     headers = {
@@ -67,16 +71,45 @@ def get_abstract(doi, api_key, max_retries=3, backoff_factor=0.3):
             response = httpx.get(url, headers=headers, timeout=30.0)
             if response.status_code == 200:
                 data = response.json()
-                return data.get('abstracts-retrieval-response', {}).get('coredata', {}).get('dc:description', 'No abstract available')
+                coredata = data.get('abstracts-retrieval-response', {}).get('coredata', {})
+                
+                # Attempt to get the abstract (dc:description)
+                abstract = coredata.get('dc:description', None)
+                
+                # Fallback to prism:teaser or dc:title if no abstract is available
+                if abstract:
+                    return abstract
+                else:
+                    teaser = coredata.get('prism:teaser', None)
+                    if teaser:
+                        return teaser
+                    title = coredata.get('dc:title', 'No abstract or title available')
+                    return f"No abstract available. Title: {title}"
+
+            elif response.status_code == 404:
+                print(f"DOI not found: {doi}")
+                return 'DOI not found'
+            elif response.status_code == 401:
+                print(f"Authentication failed for DOI: {doi}")
+                return 'Authentication failed'
+            elif response.status_code == 429:
+                print("Quota exceeded, please try again later.")
+                return 'Quota exceeded'
             else:
                 print(f"Error {response.status_code} for DOI: {doi}")
-                return 'Error fetching content'
+                return f"Error {response.status_code}"
         except httpx.ReadTimeout:
             print(f"Read timeout for DOI: {doi}, attempt {attempt + 1}")
             if attempt < max_retries - 1:
-                time.sleep(backoff_factor * (2 ** attempt))
+                time.sleep(backoff_factor * (2 ** attempt))  # Exponential backoff
             else:
                 return 'Error fetching content due to timeout'
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
+
+    return 'Error fetching content'
+
 
 @app.route('/', methods=['GET'])
 def index():

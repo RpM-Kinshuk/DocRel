@@ -5,7 +5,6 @@ import numpy as np
 from utils.util import *
 import matplotlib.pyplot as plt
 
-dist = 'euclid_'
 sv = True
 disable_tqdm = True
 
@@ -30,8 +29,8 @@ def similarity_scores(query, top_n, model, sim_measure):
     cos_result_df = pd.concat([dataset, cos_scores_df], axis=1)
     euclid_result_df = pd.concat([dataset, euclid_scores_df], axis=1)
     if sv:
-        cos_result_df.to_csv(f'./scores.csv', index=False)
-        euclid_result_df.to_csv(f'./scores.csv', index=False)
+        cos_result_df.to_csv(f'./cosine_scores.csv', index=False)
+        euclid_result_df.to_csv(f'./euclid_scores.csv', index=False)
     
     current_df = cos_result_df if sim_measure == 'cosine' else euclid_result_df
     top_results = current_df.sort_values(by='Similarity', ascending=False if sim_measure == 'cosine' else True).head(int(top_n))

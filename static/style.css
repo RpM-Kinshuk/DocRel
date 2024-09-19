@@ -9,8 +9,9 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure the body takes full height */
 }
 
 /* Navigation Bar */
@@ -18,10 +19,14 @@ nav {
     background-color: #0056b3;
     padding: 10px 20px;
     color: #fff;
+    position: fixed; /* Fix the nav bar */
+    top: 0; /* Stick it to the top */
+    width: 100%; /* Make it span across the whole width */
+    z-index: 1000; /* Ensure it stays above other elements */
 }
 
 nav ul {
-    list-style: none;
+    list-style: none; /* Remove bullets */
     padding: 0;
     margin: 0;
     display: flex;
@@ -43,26 +48,53 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
+/* Footer Styles */
+footer {
+    background-color: #0056b3; /* Same background color as nav */
+    padding: 10px 20px; /* Same padding as nav */
+    color: #fff; /* Same font color as nav */
+    text-align: center; /* Center the text */
+    position: fixed; /* Fix the footer */
+    bottom: 0; /* Stick it to the bottom */
+    width: 100%; /* Make it span across the whole width */
+    z-index: 1000; /* Ensure it stays above other elements */
+    font-weight: bold; /* Same font weight as nav */
+    font-size: 16px; /* Same font size as nav */
+}
+
+footer ul {
+    list-style: none; /* Remove bullets */
+    padding: 0; /* Reset padding */
+    margin: 0; /* Reset margin */
+}
+
+footer a {
+    color: #fff; /* Ensure footer links match nav link colors */
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline; /* Same hover effect as nav */
+}
+
 /* Container */
 .container {
     flex: 1;
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px; /* This can stay */
+    width: 100%; /* Allow the container to take full width */
+    max-width: 750px; /* Increase max width for a wider container */
+    margin: 80px auto 20px; /* Keep the same margins for nav and footer */
+    padding: 50px; /* This can stay */
     background: rgba(255, 255, 255, 0.5);
     border: 2px solid rgba(255, 255, 255, 0.7);
     border-radius: 20px;
     backdrop-filter: blur(15px);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 160px); /* Adjusted for fixed nav and footer */
     position: relative;
     z-index: 1;
     overflow-y: auto; /* Allow scrolling in the container */
 }
 
-.container:hover {
-    overflow: auto; /* Prevents overflow on hover */
-}
 
 /* Form Style */
 form {
@@ -140,12 +172,4 @@ form {
     margin-top: 15px;
     font-size: 18px;
     font-weight: bold;
-}
-
-/* Footer Styles */
-footer {
-    background-color: #0056b3;
-    padding: 3px 20px;
-    color: #fff;
-    text-align: center; /* Center the text */
 }

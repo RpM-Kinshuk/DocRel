@@ -1,3 +1,4 @@
+from itertools import count
 import time
 import httpx
 import logging
@@ -135,11 +136,20 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
     # check if dc:title is present, rename it to Title
     if 'dc:title' in df.columns:
         df['Title'] = df['dc:title']
+    if 'prism:doi' in df.columns:
+        df['DOI'] = df['prism:doi']
     if 'DOI' in df.columns:
         df['DOI'] = df['DOI'].apply(lambda x: f"https://doi.org/{x}")
-    if 'Authors' in df.columns:
-        # convert to list of strings
-        pass
+    if 'dc:creator' in df.columns:
+        df['Authors'] = df['dc:creator']
+    if 'Abstract' in df.columns:
+        df['abstract'] = df['Abstract']
+    count = 0
+    for rnd_str in df['abstract']:
+        if 'No abstract' in rnd_str:
+            count += 1
+    if count > 0.5 * len(df):
+        df['abstract'] = ''
     df = df[['Title', 'Authors', 'abstract', 'DOI']]
     print(df['Authors'].head())
     results = df.to_dict(orient='records')

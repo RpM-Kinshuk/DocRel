@@ -126,6 +126,14 @@ form {
     border-radius: 4px; /* Match input border radius */
 }
 
+#measure {
+    display: inline;
+    font-size: 18px; /* Increase font size */
+    padding: 10px; /* Add padding */
+    border: 1px solid #ccc; /* Match input border style */
+    border-radius: 4px; /* Match input border radius */
+}
+
 /* Button Style */
 .btn-submit {
     padding: 12px 20px;

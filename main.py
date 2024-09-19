@@ -122,6 +122,7 @@ def semantic():
         query = request.form['query']
         selected_model = request.form['model']  # Get the selected model
         top_n = request.form['top_n']  # Get the number of results to return
+        sim_measure = request.form['sim_measure']  # Get the similarity measure
         top_results = perform_semantic_analysis(query, top_n, selected_model)
         return jsonify({'results': top_results})
     return render_template('semantic.html')

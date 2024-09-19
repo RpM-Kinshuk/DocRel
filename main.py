@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, jsonify
-import requests
-import logging
-import pandas as pd
-import httpx
 import time
+import httpx
+import logging
+import requests
+import pandas as pd
+from utils.clean import clean_text
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -123,11 +124,14 @@ def fetch():
         progress_step = 50 / total_records
         progress = min(100, progress + progress_step)
 
+    # Clean results
+    df = clean_text(df)
+
     # Save to CSV
-    df.to_csv('scopus_results_with_abstracts.csv', index=False)
+    df.to_csv('scopus_results.csv', index=False)
     
     progress = 100  # Set progress to 100% upon completion
-    return jsonify({"message": f"Saved {len(df)} records to scopus_results_with_abstracts.csv"})
+    return jsonify({"message": f"Saved {len(df)} records to scopus_results.csv"})
 
 @app.route('/progress', methods=['GET'])
 def get_progress():

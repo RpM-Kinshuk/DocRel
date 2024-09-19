@@ -36,12 +36,21 @@
 
         <button type="submit" class="btn-submit">Analyze</button>
     </form>
+    <br> <br>
+    <div id="loading" style="display: none;">Loading...</div>
+    <div id="semantic-results"></div>
 
     <div id="semantic-results"></div>
 
     <script>
-    document.getElementById('semantic-form').addEventListener('submit', function(event) {
+        document.getElementById('semantic-form').addEventListener('submit', function(event) {
         event.preventDefault();
+        
+        // Show the loading spinner
+        const loadingElement = document.getElementById('loading');
+        loadingElement.innerHTML = '<div class="loading-spinner"></div>'; // Add spinner
+        loadingElement.style.display = 'block';
+
         const formData = new FormData(event.target);
 
         fetch('/semantic', {
@@ -52,7 +61,10 @@
         .then(data => {
             const resultsContainer = document.getElementById('semantic-results');
             resultsContainer.innerHTML = ''; // Clear previous results
-            
+
+            // Hide the loading spinner
+            loadingElement.style.display = 'none';
+
             const results = data.results;
             if (results.length > 0) {
                 const title = document.createElement('h2');
@@ -72,8 +84,10 @@
         })
         .catch(error => {
             console.error('Error:', error);
+            loadingElement.style.display = 'none'; // Hide spinner on error
         });
     });
+
 </script>
 
 {% endblock %}

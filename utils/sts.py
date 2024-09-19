@@ -11,7 +11,7 @@ disable_tqdm = True
 def similarity_scores(query, top_n, model, sim_measure):
     dataset = pd.read_csv('./scopus_results.csv')
     if os.path.exists(f'./{model}_cosine_scores.csv'):
-        tmp_df = pd.read_csv('./cosine_scores.csv')
+        tmp_df = pd.read_csv(f'./{model}_cosine_scores.csv')
         tmp_df.drop(columns=['Similarity'], inplace=True)
         if tmp_df.equals(dataset):
             tmp_str = 'cosine' if sim_measure == 'cosine' else 'euclid'

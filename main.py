@@ -86,13 +86,26 @@ def index():
 def semantic():
     if request.method == 'POST':
         query = request.form['query']
-        top_results = perform_semantic_analysis(query)
+        selected_model = request.form['model']  # Get the selected model
+        top_n = request.form['top_n']  # Get the number of results to return
+        top_results = perform_semantic_analysis(query, top_n, selected_model)
         return jsonify({'results': top_results})
     return render_template('semantic.html')
 
-def perform_semantic_analysis(query):
-    mock_results = ['Result 1', 'Result 2', 'Result 3']
-    return mock_results
+def perform_semantic_analysis(query, top_n, model):
+    # Mocking results for each model, you can replace this with real logic
+    if model == 'model1':
+        mock_results = ['Model 1 Result 1', 'Model 1 Result 2', 'Model 1 Result 3', 'Model 1 Result 4', 'Model 1 Result 5', 'Model 1 Result 6']
+    elif model == 'model2':
+        mock_results = ['Model 2 Result 1', 'Model 2 Result 2', 'Model 2 Result 3', 'Model 2 Result 4', 'Model 2 Result 5', 'Model 2 Result 6']
+    elif model == 'model3':
+        mock_results = ['Model 3 Result 1', 'Model 3 Result 2', 'Model 3 Result 3', 'Model 3 Result 4', 'Model 3 Result 5', 'Model 3 Result 6']
+    else:
+        mock_results = ['Default Result 1', 'Default Result 2', 'Default Result 3', 'Default Result 4', 'Default Result 5', 'Default Result 6']
+    
+    # Return only the top 5 results
+    return mock_results[:int(top_n)]
+
 
 @app.route('/fetch', methods=['POST'])
 def fetch():

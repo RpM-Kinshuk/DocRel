@@ -203,6 +203,10 @@ def get_progress():
 def about():
     return render_template('about.html')
 
+@app.route('/mail', methods=['GET', 'POST'])
+def mail():
+    return render_template('mail.html')
+
 if __name__ == '__main__':
     # Configure logging
     logger = logging.getLogger()

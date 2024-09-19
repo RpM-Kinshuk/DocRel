@@ -1,16 +1,11 @@
 import time
 import torch
-# import fasttext 
 import numpy as np
-import pandas as pd
-import tensorflow as tf
 from tqdm.auto import tqdm
-import tensorflow_hub as hub
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.metrics.pairwise import euclidean_distances
 
 def calculate_similarity_scores(summary_embeddings, goal_embeddings):
+    from sklearn.metrics.pairwise import cosine_similarity
+    from sklearn.metrics.pairwise import euclidean_distances
     # print('Euclidean Distance is being used')
     euclid_sim_scores = euclidean_distances(summary_embeddings, goal_embeddings)
     # print('Cosine Similarity is being used')
@@ -18,6 +13,7 @@ def calculate_similarity_scores(summary_embeddings, goal_embeddings):
     return cos_sim_scores, euclid_sim_scores
 
 def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+    import tensorflow_hub as hub
     # Load the USE model
     use_model = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
     # Process summaries in batches
@@ -38,6 +34,7 @@ def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
     return cos_sim_scores, euclid_sim_scores
 
 def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+    from sentence_transformers import SentenceTransformer
     # Load the SentenceTransformer model
     stf_model = SentenceTransformer('paraphrase-MiniLM-L6-v2', device=device) # type: ignore
     def get_stf_query_embedding(query):
@@ -61,6 +58,7 @@ def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
     return cos_sim_scores, euclid_sim_scores
 
 def fasttext(abstracts, query, disable_tqdm=True):
+    # import fasttext
     # fasttext.util.download_model('en', if_exists='ignore')  # English
     fasttext_model = fasttext.load_model('./cc.en.300.bin')
     def get_fasttext_embedding(text):
@@ -136,6 +134,8 @@ def glove(abstracts, query, disable_tqdm=True):
     return cos_sim_scores, euclid_sim_scores
 
 def elmo(abstracts, query, disable_tqdm=True):
+    import tensorflow as tf
+    import tensorflow_hub as hub
     # Load ELMo model
     elmo_model = hub.load("https://tfhub.dev/google/elmo/3")
     def get_elmo_embedding(texts):

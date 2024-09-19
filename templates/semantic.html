@@ -77,16 +77,20 @@
                         const titleElement = document.createElement('h3');
                         titleElement.textContent = result['Title']; // or whatever your title column is
 
+                        const authorElement = document.createElement('p');
+                        authorElement.textContent = result['Authors']; // Adjust to your column name
+
                         const abstractElement = document.createElement('p');
                         abstractElement.textContent = result['abstract']; // Adjust to your column name
 
                         // Create a link if you have a link column
                         const linkElement = document.createElement('a');
-                        linkElement.href = result['Link']; // Adjust to your link column
-                        linkElement.textContent = 'View More'; // Link text
+                        linkElement.href = result['DOI']; // Adjust to your link column
+                        linkElement.textContent = 'View Full Text'; // Link text
                         linkElement.target = '_blank'; // Open in a new tab
 
                         card.appendChild(titleElement);
+                        card.appendChild(authorElement);
                         card.appendChild(abstractElement);
                         card.appendChild(linkElement);
                         resultsContainer.appendChild(card);

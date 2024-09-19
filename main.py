@@ -136,8 +136,12 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
     if 'dc:title' in df.columns:
         df['Title'] = df['dc:title']
     if 'DOI' in df.columns:
-        df['Link'] = df['DOI']
-    df = df[['abstract', 'Title', 'Link']]
+        df['DOI'] = df['DOI'].apply(lambda x: f"https://doi.org/{x}")
+    if 'Authors' in df.columns:
+        # convert to list of strings
+        pass
+    df = df[['Title', 'Authors', 'abstract', 'DOI']]
+    print(df['Authors'].head())
     results = df.to_dict(orient='records')
     return results
 

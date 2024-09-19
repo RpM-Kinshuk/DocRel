@@ -1,7 +1,11 @@
 /* General Body Style */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    /* background-color: #f4f4f4; */
+    background-image: url('/static/bg.jpg'); /* Path to your image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
     margin: 0;
     padding: 0;
     color: #333;
@@ -45,9 +49,11 @@ nav ul li a:hover {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.5); /* Translucent background */
+    border: 2px solid rgba(255, 255, 255, 0.7); /* Translucent border */
+    border-radius: 20px; /* Rounded corners */
+    backdrop-filter: blur(15px); /* Frosted glass effect */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
     min-height: calc(100vh - 60px); /* Adjust based on footer height */
 }
 

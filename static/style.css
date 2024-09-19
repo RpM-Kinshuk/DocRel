@@ -254,14 +254,22 @@ form {
     transition: transform 0.2s; /* Animation on hover */
 }
 
+.result-card h3 {
+    margin: 0 0 10px;
+    font-size: 20px; /* Adjust title size */
+}
+
 .result-card a {
     color: #007BFF; /* Link color */
     text-decoration: none; /* Remove underline */
 }
 
+.result-card a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
 .result-card:hover {
     transform: translateY(-3px); /* Lift effect on hover */
-    text-decoration: underline;
 }
 
 /* Title Styles */
@@ -270,9 +278,3 @@ form {
     color: #0056b3; /* Title color */
     font-size: 24px; /* Larger title */
 }
-
-.result-card h3 {
-    margin: 0 0 10px;
-    font-size: 20px; /* Adjust title size */
-}
-

@@ -34,7 +34,7 @@ def similarity_scores(query, top_n, model, sim_measure):
         euclid_result_df.to_csv(f'/content/drive/MyDrive/STS Measures/euclid/scores/fasttext_scores.csv', index=False)
     
     current_df = cos_result_df if sim_measure == 'cosine' else euclid_result_df
-    top_results = current_df.sort_values(by='Similarity', ascending=False).head(int(top_n))
+    top_results = current_df.sort_values(by='Similarity', ascending=False if sim_measure == 'cosine' else True).head(int(top_n))
     return top_results
 
 def analyze_lengths(dataset):

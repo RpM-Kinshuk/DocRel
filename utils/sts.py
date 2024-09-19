@@ -2,25 +2,40 @@ import os
 import time
 import torch
 import numpy as np
-from util import *
+from utils.util import *
 import pandas as pd
-# import fasttext.util
-import tensorflow as tf
-from tqdm.auto import tqdm
-import tensorflow_hub as hub
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
-
 
 dist = 'euclid_'
-sv = True
-disable_tqdm = False
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+sv = False
+disable_tqdm = True
 
-def similarity_scores(model, query):
+def similarity_scores(query, top_n, model, sim_measure):
     dataset = pd.read_csv('./scopus_results.csv')
     # dataset = dataset[:1000]
-    abstracts = dataset['abstract'].tolist()
+    # Make a list of str out of the abstracts
+    abstracts = dataset['abstract'].astype(str).tolist()
+    if model == 'use':
+        cos_sim_scores, euclid_sim_scores = use(abstracts, query, disable_tqdm)
+    elif model == 'stf':
+        cos_sim_scores, euclid_sim_scores = stf(abstracts, query, disable_tqdm)
+    elif model == 'fasttext':
+        cos_sim_scores, euclid_sim_scores = fasttext(abstracts, query, disable_tqdm)
+    elif model == 'elmo':
+        cos_sim_scores, euclid_sim_scores = elmo(abstracts, query, disable_tqdm)
+    else:
+        raise ValueError('Invalid model selected')
+    
+    cos_scores_df = pd.DataFrame(cos_sim_scores, columns=[f'Similarity'])
+    euclid_scores_df = pd.DataFrame(euclid_sim_scores, columns=[f'Similarity'])
+    cos_result_df = pd.concat([dataset, cos_scores_df], axis=1)
+    euclid_result_df = pd.concat([dataset, euclid_scores_df], axis=1)
+    if sv:
+        cos_result_df.to_csv(f'/content/drive/MyDrive/STS Measures/cosine/scores/fasttext_scores.csv', index=False)
+        euclid_result_df.to_csv(f'/content/drive/MyDrive/STS Measures/euclid/scores/fasttext_scores.csv', index=False)
+    
+    current_df = cos_result_df if sim_measure == 'cosine' else euclid_result_df
+    top_results = current_df.sort_values(by='Similarity', ascending=False).head(int(top_n))
+    return top_results
 
 def analyze_lengths(dataset):
     print('Word-wise')

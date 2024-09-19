@@ -181,3 +181,43 @@ form {
     font-size: 18px;
     font-weight: bold;
 }
+
+.radio-group {
+    display: flex;
+    gap: 50px; /* Space between radio buttons */
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    font-weight: normal; /* Normal weight for radio labels */
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 10px; /* Space between the radio button and label */
+    appearance: none; /* Remove default appearance */
+    width: 20px; /* Custom width */
+    height: 20px; /* Custom height */
+    border-radius: 50%; /* Round shape */
+    outline: none; /* Remove outline */
+    background-color: #fff; /* Background color */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.radio-group input[type="radio"]:checked {
+    background-color: #007BFF; /* Change background when checked */
+    border-color: #007BFF; /* Change border when checked */;
+}
+
+.radio-group input[type="radio"]:checked:hover {
+    background-color: #0015ff; /* Change background when checked */
+    border-color: #007BFF; /* Change border when checked */;
+}
+
+.radio-group input[type="radio"]:focus {
+    outline: 2px solid #007BFF; /* Add focus outline */
+}
+
+.radio-group input[type="radio"]:hover {
+    background-color: greenyellow; /* Change background on hover */
+}

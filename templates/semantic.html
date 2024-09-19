@@ -15,22 +15,23 @@
             <input type="number" id="top_n" name="top_n" required value="5">
         </div>
 
-        <div class="form-group">
-            <label for="model">Select Model:</label>
-            <select id="model" name="model" required>
-                <option value="model1">Model 1</option>
-                <option value="model2">Model 2</option>
-                <option value="model3">Model 3</option>
-            </select>
+        <div class="form-group" style="border: none;">
+            <label>Select Model:</label>
+            <div class="radio-group" id="model">
+                <label><input type="radio" name="model" value="use" required> Universal Sentence Encoder</label>
+                <label><input type="radio" name="model" value="stf"> Sentence Transformers</label>
+                <label><input type="radio" name="model" value="fasttext"> fastText</label>
+                <label><input type="radio" name="model" value="glove"> GloVe</label>
+                <label><input type="radio" name="model" value="elmo"> ELMo</label>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="measure">Select Measure:</label>
-            <select id="measure" name="measure" required>
-                <option value="measure1">Measure 1</option>
-                <option value="measure2">Measure 2</option>
-                <option value="measure3">Measure 3</option>
-            </select>
+        <div class="form-group" style="border: none;">
+            <label>Select Measure:</label>
+            <div class="radio-group" id="sim_measure">
+                <label><input type="radio" name="sim_measure" value="cosine" required> Cosine Score</label>
+                <label><input type="radio" name="sim_measure" value="euclid"> Euclidean Distance</label>
+            </div>
         </div>
 
         <button type="submit" class="btn-submit">Analyze</button>
@@ -39,36 +40,40 @@
     <div id="semantic-results"></div>
 
     <script>
-        document.getElementById('semantic-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const query = formData.get('query');
-            const model = formData.get('model');
+    document.getElementById('semantic-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
 
-            fetch('/semantic', {
-                method: 'POST',
-                body: new URLSearchParams(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultsContainer = document.getElementById('semantic-results');
-                resultsContainer.innerHTML = ''; // Clear previous results
-                const results = data.results;
-                if (results.length > 0) {
-                    const ul = document.createElement('ul');
-                    results.forEach(result => {
-                        const li = document.createElement('li');
-                        li.textContent = result;
-                        ul.appendChild(li);
-                    });
-                    resultsContainer.appendChild(ul);
-                } else {
-                    resultsContainer.textContent = 'No results found';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        fetch('/semantic', {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById('semantic-results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+            
+            const results = data.results;
+            if (results.length > 0) {
+                const title = document.createElement('h2');
+                title.textContent = 'Results:';
+                resultsContainer.appendChild(title); // Add the title
+
+                const ul = document.createElement('ul');
+                results.forEach(result => {
+                    const li = document.createElement('li');
+                    li.textContent = result;
+                    ul.appendChild(li);
+                });
+                resultsContainer.appendChild(ul);
+            } else {
+                resultsContainer.textContent = 'No results found';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    </script>
+    });
+</script>
+
 {% endblock %}

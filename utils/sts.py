@@ -3,7 +3,7 @@ import time
 import torch
 import numpy as np
 from utils.util import *
-import pandas as pd
+import matplotlib.pyplot as plt
 
 dist = 'euclid_'
 sv = True

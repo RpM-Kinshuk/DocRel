@@ -1,11 +1,11 @@
 /* General Body Style */
 body {
     font-family: Arial, sans-serif;
-    /* background-color: #f4f4f4; */
     background-image: url('/static/bg.jpg'); /* Path to your image */
     background-size: cover; /* Ensure the image covers the entire background */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Keep the background fixed */
     margin: 0;
     padding: 0;
     color: #333;
@@ -48,13 +48,20 @@ nav ul li a:hover {
     flex: 1;
     max-width: 800px;
     margin: 20px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.5); /* Translucent background */
-    border: 2px solid rgba(255, 255, 255, 0.7); /* Translucent border */
-    border-radius: 20px; /* Rounded corners */
-    backdrop-filter: blur(15px); /* Frosted glass effect */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
-    min-height: calc(100vh - 60px); /* Adjust based on footer height */
+    padding: 20px; /* This can stay */
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    min-height: calc(100vh - 60px);
+    position: relative;
+    z-index: 1;
+    overflow-y: auto; /* Allow scrolling in the container */
+}
+
+.container:hover {
+    overflow: auto; /* Prevents overflow on hover */
 }
 
 /* Form Style */
@@ -74,8 +81,8 @@ form {
 }
 
 .form-group input {
-    width: 100%;
-    padding: 10px;
+    width: calc(100% - 20px); /* Account for additional padding */
+    padding: 10px; /* Padding for better spacing */
     border: 1px solid #ccc;
     border-radius: 4px;
 }

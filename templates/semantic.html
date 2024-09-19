@@ -38,7 +38,6 @@
     </form>
     <br> <br>
     <div id="loading" style="display: none;">Loading...</div>
-    <div id="semantic-results"></div>
 
     <div id="semantic-results"></div>
 
@@ -70,14 +69,17 @@
                 const title = document.createElement('h2');
                 title.textContent = 'Results:';
                 resultsContainer.appendChild(title); // Add the title
-
-                const ul = document.createElement('ul');
+            
                 results.forEach(result => {
-                    const li = document.createElement('li');
-                    li.textContent = result;
-                    ul.appendChild(li);
+                    const card = document.createElement('div');
+                    card.classList.add('result-card');
+
+                    const content = document.createElement('p');
+                    content.textContent = result;
+                
+                    card.appendChild(content);
+                    resultsContainer.appendChild(card);
                 });
-                resultsContainer.appendChild(ul);
             } else {
                 resultsContainer.textContent = 'No results found';
             }

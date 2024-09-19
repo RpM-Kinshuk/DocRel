@@ -132,7 +132,11 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
     # Mocking results for each model, you can replace this with real logic
     df = similarity_scores(query, top_n, model, sim_measure)
     results = df.to_dict(orient='records')
-    results = df['dc:title'].tolist()
+    # check if column exists
+    if 'dc:title' in df.columns:
+        results = df['dc:title'].tolist()
+    else:
+        results = df['abstract'].tolist()
     return results
 
 @app.route('/fetch', methods=['POST'])

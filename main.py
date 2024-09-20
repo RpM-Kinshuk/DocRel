@@ -1,5 +1,4 @@
-import glob
-from itertools import count
+import os
 import time
 import httpx
 import logging
@@ -127,6 +126,8 @@ def index():
 @app.route('/semantic', methods=['GET', 'POST'])
 def semantic():
     global top_n, query
+    if not os.path.exists('scopus_results.csv'):
+        return jsonify({'message': 'Please fetch data first!'})
     if request.method == 'POST':
         query = str(request.form['query'])
         selected_model = request.form['model']  # Get the selected model

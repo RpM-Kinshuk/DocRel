@@ -4,6 +4,7 @@ import httpx
 import logging
 import requests
 import pandas as pd
+from utils.mailing import doc_mail
 from utils.sts import similarity_scores
 from flask import Flask, render_template, request, jsonify
 from utils.clean import clean_text, IgnoreSpecificLogsFilter
@@ -19,6 +20,11 @@ BASE_URL = 'https://api.elsevier.com/content/search/scopus'
 
 # Global variable to track progress
 progress = 0
+top_n = 5
+start_year = 2024
+end_year = 2024
+results_per_year = 10
+query = 'machine learning'
 
 def get_results_for_year(keywords, year, results_per_year, total_years):
     global progress
@@ -60,7 +66,6 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
         time.sleep(1)  # Sleep to avoid rate-limiting or throttling issues
 
     return results[:results_per_year]  # Return only the specified number of results
-
 
 def get_abstract(doi, api_key, max_retries=3, backoff_factor=0.3):
     headers = {
@@ -113,13 +118,13 @@ def get_abstract(doi, api_key, max_retries=3, backoff_factor=0.3):
 
     return 'Error fetching content'
 
-
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
 @app.route('/semantic', methods=['GET', 'POST'])
 def semantic():
+    global top_n, query
     if request.method == 'POST':
         query = str(request.form['query'])
         selected_model = request.form['model']  # Get the selected model
@@ -157,7 +162,7 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
 
 @app.route('/fetch', methods=['POST'])
 def fetch():
-    global progress
+    global progress, start_year, end_year, results_per_year
     progress = 0  # Reset progress
 
     keywords = request.form['keywords'].split(',')
@@ -203,9 +208,15 @@ def get_progress():
 def about():
     return render_template('about.html')
 
-@app.route('/mail', methods=['GET', 'POST'])
+@app.route('/mail', methods=['GET'])
 def mail():
     return render_template('mail.html')
+
+@app.route('/send', methods=['POST'])
+def send():
+    email = request.form['email']
+    doc_mail(email, query, start_year, end_year, results_per_year, top_n)
+    return jsonify({'message': 'Mail sent successfully!'})
 
 if __name__ == '__main__':
     # Configure logging

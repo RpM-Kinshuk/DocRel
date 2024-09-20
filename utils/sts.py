@@ -8,14 +8,14 @@ disable_tqdm = True
 
 def similarity_scores(query, top_n, model, sim_measure):
     dataset = pd.read_csv('./scopus_results.csv')
-    if os.path.exists(f'./{model}_cosine_scores.csv'):
-        tmp_df = pd.read_csv(f'./{model}_cosine_scores.csv')
-        tmp_df.drop(columns=['Similarity'], inplace=True)
-        if tmp_df.equals(dataset):
-            tmp_str = 'cosine' if sim_measure == 'cosine' else 'euclid'
-            current_df = pd.read_csv(f'./{model}_{tmp_str}_scores.csv')
-            top_results = current_df.sort_values(by='Similarity', ascending=False if sim_measure == 'cosine' else True).head(int(top_n))
-            return top_results
+    # if os.path.exists(f'./{model}_cosine_scores.csv'):
+    #     tmp_df = pd.read_csv(f'./{model}_cosine_scores.csv')
+    #     tmp_df.drop(columns=['Similarity'], inplace=True)
+    #     if tmp_df.equals(dataset):
+    #         tmp_str = 'cosine' if sim_measure == 'cosine' else 'euclid'
+    #         current_df = pd.read_csv(f'./{model}_{tmp_str}_scores.csv')
+    #         top_results = current_df.sort_values(by='Similarity', ascending=False if sim_measure == 'cosine' else True).head(int(top_n))
+    #         return top_results
     # dataset = dataset[:1000]
     # Make a list of str out of the abstracts
     abstracts = dataset['abstract'].astype(str).tolist()

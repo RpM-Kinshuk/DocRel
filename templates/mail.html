@@ -7,11 +7,39 @@
     <form id="mail-form" action="/send" method="POST">
         <div class="form-group">
             <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" placeholder="e.g., abc@example.com" required autocomplete ="off">
+            <input type="email" id="email" name="email" placeholder="e.g., abc@example.com" required autocomplete="off">
         </div>
         
         <button type="submit" id="send-results" class="btn-submit">Send</button>
     </form>
     
     <p id="message" class="message"></p>
+    <br>
+    <div id="loading" style="display: none;"></div>
+
+    <script>
+        document.getElementById('mail-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const loadingElement = document.getElementById('loading');
+            loadingElement.innerHTML = '<div class="loading-spinner"></div>'; // Add spinner
+            loadingElement.style.display = 'block';
+
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingElement.style.display = 'none';
+                document.getElementById('message').textContent = data.message;
+            })
+            .catch(error => {
+                loadingElement.style.display = 'none';
+                document.getElementById('message').textContent = 'Error sending results.';
+                console.error('Error:', error);
+            });
+        });
+    </script>
 {% endblock %}

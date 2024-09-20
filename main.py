@@ -1,3 +1,4 @@
+import glob
 from itertools import count
 import time
 import httpx
@@ -19,6 +20,7 @@ HEADERS = {
 BASE_URL = 'https://api.elsevier.com/content/search/scopus'
 
 # Global variable to track progress
+results = None
 progress = 0
 top_n = 5
 start_year = 2024
@@ -135,7 +137,7 @@ def semantic():
     return render_template('semantic.html')
 
 def perform_semantic_analysis(query, top_n, model, sim_measure):
-    # Mocking results for each model, you can replace this with real logic
+    global results
     df = similarity_scores(query, top_n, model, sim_measure)
     # Only keep 'abstract', 'Title' and 'Link' columns
     # check if dc:title is present, rename it to Title
@@ -215,7 +217,10 @@ def mail():
 @app.route('/send', methods=['POST'])
 def send():
     email = request.form['email']
-    doc_mail(email, query, start_year, end_year, results_per_year, top_n)
+    for v in [email, query, start_year, end_year, results_per_year, top_n, results]:
+        if v is None:
+            return jsonify({'message': 'Please fetch data first!'})
+    doc_mail(email, query, start_year, end_year, results_per_year, top_n, results)
     return jsonify({'message': 'Mail sent successfully!'})
 
 if __name__ == '__main__':

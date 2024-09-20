@@ -1,59 +1,96 @@
-def generate_mail(query, st_year, en_year, pubs, top_n):
-    mail_content = f"""\
-            <html>
-
-            <head>
-                <div style="font-weight: 1000; color: white;"><u>Rainfall Prediction Result</u></div>
-            </head>
-            
-            <body style="background-color: black; text-align: center;">
-                <br> <a href="#">
-                <img src="https://i.imgur.com/PiZMOCp.png" width="36%" height="56%"
-                    style="vertical-align:middle; align-items: center;"> </a>
-                <p style="color: green;">
-                    <b>
-                        Hello, this is an automated message from DocRel!
-                    </b>
-                </p>
-                <p>
-                <div style="color: white">
-                    According to the entered data: <br>
+def generate_mail(query, st_year, en_year, pubs, top_n, results):
+    mail_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 20px auto;
+                    padding: 20px;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                }}
+                h2 {{
+                    text-align: center;
+                    color: #0056b3;
+                }}
+                table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }}
+                table, th, td {{
+                    border: 1px solid #ddd;
+                }}
+                th, td {{
+                    padding: 8px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #f2f2f2;
+                    color: #333;
+                }}
+                .footer {{
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 14px;
+                    color: #666;
+                }}
+                a {{
+                    color: #0056b3;
+                    text-decoration: none;
+                }}
+                a:hover {{
+                    text-decoration: underline;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Semantic Analysis Results</h2>
+                <p><strong>Query:</strong> {query}</p>
+                <p><strong>Time frame:</strong> {st_year} - {en_year}</p>
+                <p><strong>Publications per year:</strong> {pubs}</p>
+                <p><strong>Top {top_n} results:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Authors</th>
+                            <th>Abstract</th>
+                            <th>DOI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {''.join([f'''
+                        <tr>
+                            <td>{res['Title']}</td>
+                            <td>{res['Authors']}</td>
+                            <td>{res['abstract'][:100]}...</td>
+                            <td><a href="{res['DOI']}" target="_blank">Link</a></td>
+                        </tr>''' for res in results])}
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <p>Thank you for using our service!</p>
+                    <p>
+                        Regards, 
+                        <a href="https://www.linkedin.com/in/kinshuk-goel/" target="_blank">Kinshuk Goel,</a>
+                        <a href="https://www.linkedin.com/in/avni-verma-975291230/" target="_blank">Avni Verma,</a>
+                        <a href="https://www.linkedin.com/in/priyanshitiwari02/" target="_blank">Priyanshi Tiwari</a>
+                        <a href="https://www.linkedin.com/in/anubhav-bhattacharyya-26b1bb24a/" target="_blank">and Anubhav Bhattacharyya</a>
+                        <br>Neural Archmages
+                    </p>
+                    <p><a href="mailto:archmages.neural@gmail.com">Mail us</a> or visit our <a href="https://github.com/RpM-Kinshuk/DocRel" target="_blank">GitHub page</a>.</p>
                 </div>
-                <div style="color: goldenrod; font-weight: 520;">
-                    Query: {query}. <br>
-                    Time frame: {st_year} - {en_year}. <br>
-                    Publications per year: {pubs}. <br>
-                    Results needed: {top_n}. <br>
-                </div>
-                </p>
-                <p style="color: red; font-weight: 750;">
-                    The top publications are: {query}WTVR mm.
-                </p>
-                <p style="color: white;">
-                    (Feel free to leave us feedback on our
-                    <a href="mailto:archmages.neural@gmail.com?
-                                &cc=
-                                &bcc=
-                                &subject=Feedback for Rainfall Prediction Page
-                                &body=Add whatever suggestions or message you would like to send here" 
-                                target="_blank" style="color: white;">
-                        Mail
-                    </a> or
-                    <a href="https://github.com/RpM-Kinshuk/DocRel" target="_blank"> Github Page</a>!)
-                </p>
-                <p>
-                <div style="color: limegreen;">
-                    Thank you for using our service!
-                </div>
-                <div style="color: white; font-weight: 750;"> <br>
-                    <div style="color:white;">Regards,</div>
-                    <a href="https://www.linkedin.com/in/kinshuk-goel/" target="_blank" style="color: rgb(13, 13, 191);">Kinshuk</a> 
-                    <br> 
-                    <div style="color:red">Neural Archmages</div>
-                </div>
-                </p>
-            </body>
-            
-            </html>
-        """  # .format(month, day, temp, sphum, relhum, rainfall)
+            </div>
+        </body>
+        </html>
+    """
     return mail_content

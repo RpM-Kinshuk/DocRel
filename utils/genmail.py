@@ -83,8 +83,8 @@ def generate_mail(query, st_year, en_year, pubs, top_n, results):
                         Regards, 
                         <a href="https://www.linkedin.com/in/kinshuk-goel/" target="_blank">Kinshuk Goel,</a>
                         <a href="https://www.linkedin.com/in/avni-verma-975291230/" target="_blank">Avni Verma,</a>
-                        <a href="https://www.linkedin.com/in/priyanshitiwari02/" target="_blank">Priyanshi Tiwari</a>
-                        <a href="https://www.linkedin.com/in/anubhav-bhattacharyya-26b1bb24a/" target="_blank">and Anubhav Bhattacharyya</a>
+                        <a href="https://www.linkedin.com/in/priyanshitiwari02/" target="_blank">Priyanshi Tiwari</a> and
+                        <a href="https://www.linkedin.com/in/anubhav-bhattacharyya-26b1bb24a/" target="_blank">Anubhav Bhattacharyya</a>
                         <br>Neural Archmages
                     </p>
                     <p><a href="mailto:archmages.neural@gmail.com">Mail us</a> or visit our <a href="https://github.com/RpM-Kinshuk/DocRel" target="_blank">GitHub page</a>.</p>

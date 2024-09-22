@@ -1,8 +1,10 @@
 import torch
 import numpy as np
 from tqdm.auto import tqdm
+from utils.util import save_cache
 from utils.util import save_embeddings
 from utils.util import load_embeddings
+from utils.util import check_embeddings
 
 def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
     import tensorflow_hub as hub

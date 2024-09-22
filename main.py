@@ -6,7 +6,7 @@ import requests
 import pandas as pd
 from utils.mailing import doc_mail
 from utils.sts import similarity_scores
-from utils.storage import save_data, load_data
+from utils.util import save_data, load_data
 from flask import Flask, render_template, request, jsonify
 from utils.clean import clean_text, IgnoreSpecificLogsFilter
 

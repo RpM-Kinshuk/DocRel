@@ -8,46 +8,51 @@ from utils.util import check_embeddings
 
 def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
     import tensorflow_hub as hub
-    # Load the USE model
     use_model = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
-    # Process summaries in batches
-    batch_size = 100
-    n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-
+    
     query_embedding = use_model([query]).numpy() # type: ignore
     abstract_embeddings = []
 
-    for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
-        batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
-        batch_embeddings = use_model(batch_summaries).numpy() # type: ignore
-        abstract_embeddings.append(batch_embeddings)
+    if check_embeddings('use', abstracts):
+        abstract_embeddings = load_embeddings('use_embeddings.npy')
+    else:
+        batch_size = 100
+        n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
 
-    abstract_embeddings = np.vstack(abstract_embeddings)
-    save_embeddings(abstract_embeddings, 'use_embeddings.npy')
+        for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
+            batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
+            batch_embeddings = use_model(batch_summaries).numpy() # type: ignore
+            abstract_embeddings.append(batch_embeddings)
+
+        abstract_embeddings = np.vstack(abstract_embeddings)
+        save_embeddings(abstract_embeddings, 'use_embeddings.npy')
+        save_cache(abstracts, 'use')
 
     return abstract_embeddings, query_embedding
 
 def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
     from sentence_transformers import SentenceTransformer
-    # Load the SentenceTransformer model
     stf_model = SentenceTransformer('paraphrase-MiniLM-L6-v2', device=device) # type: ignore
     def get_stf_query_embedding(query):
         query_embedding = stf_model.encode(query, convert_to_tensor=True, device=device) # type: ignore
         return query_embedding.cpu().numpy()
     
-    batch_size = 32
-    n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-
     query_embedding = get_stf_query_embedding(query)
     abstract_embeddings = []
 
-    for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
-        batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
-        batch_embeddings = stf_model.encode(batch_summaries, convert_to_tensor=True, device=device).cpu().numpy() # type: ignore
-        abstract_embeddings.append(batch_embeddings)
+    if check_embeddings('stf', abstracts):
+        abstract_embeddings = load_embeddings('stf_embeddings.npy')
+    else:
+        batch_size = 32
+        n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
+        for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
+            batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
+            batch_embeddings = stf_model.encode(batch_summaries, convert_to_tensor=True, device=device).cpu().numpy() # type: ignore
+            abstract_embeddings.append(batch_embeddings)
 
-    abstract_embeddings = np.vstack(abstract_embeddings)
-    save_embeddings(abstract_embeddings, 'stf_embeddings.npy')
+        abstract_embeddings = np.vstack(abstract_embeddings)
+        save_embeddings(abstract_embeddings, 'stf_embeddings.npy')
+        save_cache(abstracts, 'stf')
     
     return abstract_embeddings, query_embedding
 
@@ -69,24 +74,26 @@ def fasttext(abstracts, query, disable_tqdm=True):
         else:
             return np.zeros(300)
     
-    batch_size = 100
-    n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-
     query_embedding = get_fasttext_embedding(query)
     abstract_embeddings = []
 
-    for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
-        batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
-        batch_embeddings = np.array([get_fasttext_embedding(summary) for summary in batch_summaries])
-        abstract_embeddings.append(batch_embeddings)
+    if check_embeddings('fasttext', abstracts):
+        abstract_embeddings = load_embeddings('fasttext_embeddings.npy')
+    else:
+        batch_size = 100
+        n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
+        for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
+            batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
+            batch_embeddings = np.array([get_fasttext_embedding(summary) for summary in batch_summaries])
+            abstract_embeddings.append(batch_embeddings)
 
-    abstract_embeddings = np.vstack(abstract_embeddings)
-    save_embeddings(abstract_embeddings, 'fasttext_embeddings.npy')
+        abstract_embeddings = np.vstack(abstract_embeddings)
+        save_embeddings(abstract_embeddings, 'fasttext_embeddings.npy')
+        save_cache(abstracts, 'fasttext')
 
     return abstract_embeddings, query_embedding
 
 def glove(abstracts, query, disable_tqdm=True):
-    # Load GloVe embeddings
     def load_glove_model(glove_file):
         print("Loading GloVe Model")
         glove_model = {}
@@ -112,19 +119,22 @@ def glove(abstracts, query, disable_tqdm=True):
         else:
             return np.zeros(embedding_dim)
     
-    batch_size = 100
-    n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-    
     query_embedding = get_glove_embedding(query, glove_model)
     abstract_embeddings = []
 
-    for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
-        batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
-        batch_embeddings = np.array([get_glove_embedding(summary, glove_model) for summary in batch_summaries])
-        abstract_embeddings.append(batch_embeddings)
+    if check_embeddings('glove', abstracts):
+        abstract_embeddings = load_embeddings('glove_embeddings.npy')
+    else:
+        batch_size = 100
+        n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
+        for i in tqdm(range(n_batches), desc='Processing Batches', disable=disable_tqdm):
+            batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
+            batch_embeddings = np.array([get_glove_embedding(summary, glove_model) for summary in batch_summaries])
+            abstract_embeddings.append(batch_embeddings)
 
-    abstract_embeddings = np.vstack(abstract_embeddings)
-    save_embeddings(abstract_embeddings, 'glove_embeddings.npy')
+        abstract_embeddings = np.vstack(abstract_embeddings)
+        save_embeddings(abstract_embeddings, 'glove_embeddings.npy')
+        save_cache(abstracts, 'glove')
 
     return abstract_embeddings, query_embedding
 
@@ -138,18 +148,21 @@ def elmo(abstracts, query, disable_tqdm=True):
         output_dict = elmo_model.signatures['default'](tf.constant(texts)) # type: ignore
         return output_dict['default'].numpy()
     
-    batch_size = 100
-    n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-    
     query_embedding = get_elmo_embedding([query])
     abstract_embeddings = []
 
-    for i in tqdm(range(n_batches), desc="Processing Summaries"):
-        batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
-        batch_embeddings = get_elmo_embedding(batch_summaries)
-        abstract_embeddings.append(batch_embeddings)
+    if check_embeddings('elmo', abstracts):
+        abstract_embeddings = load_embeddings('elmo_embeddings.npy')
+    else:
+        batch_size = 100
+        n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
+        for i in tqdm(range(n_batches), desc="Processing Summaries"):
+            batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
+            batch_embeddings = get_elmo_embedding(batch_summaries)
+            abstract_embeddings.append(batch_embeddings)
 
-    abstract_embeddings = np.vstack(abstract_embeddings)
-    save_embeddings(abstract_embeddings, 'elmo_embeddings.npy')
+        abstract_embeddings = np.vstack(abstract_embeddings)
+        save_embeddings(abstract_embeddings, 'elmo_embeddings.npy')
+        save_cache(abstracts, 'elmo')
         
     return abstract_embeddings, query_embedding

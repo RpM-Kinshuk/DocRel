@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import numpy as np
 
 # File path for storing the variables
@@ -15,32 +16,60 @@ def load_data():
             return json.load(f)
     return {}
 
-def save_cache(index, abstract, filename='none_cache.json'):
-    cache_data = {
-        'index': index,
-        'abstract': abstract
-    }
-    with open(filename, 'w') as f:
-        json.dump(cache_data, f)
+def save_cache(abstracts, model='none'):
+    try:
+        cache_file = './cache/models_cache.json'
+        index = random.randint(0, len(abstracts) - 1)
+        abstract = abstracts[index]
 
-def load_cache(filename='none_cache.json'):
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
+        # Load existing cache or initialize a new one
+        if os.path.exists(cache_file):
+            with open(cache_file, 'r') as f:
+                cache_data = json.load(f)
+        else:
+            cache_data = {}
+
+        # Save the index and abstract for the current model
+        cache_data[model] = {
+            'index': index,
+            'abstract': abstract
+        }
+
+        with open(cache_file, 'w') as f:
+            json.dump(cache_data, f)
+    except Exception as e:
+        print(e)
+
+def load_cache(model='none'):
+    cache_file = './cache/models_cache.json'
+    if os.path.exists(cache_file):
+        with open(cache_file, 'r') as f:
+            cache_data = json.load(f)
+            return cache_data.get(model, None)
     return None
 
-def save_embeddings(embeddings, filename='embeddings.npy'):
-    np.save(os.path.join('./cache', filename), embeddings)
+def save_embeddings(embeddings, model='none'):
+    np.save(os.path.join('./cache', f'{model}_embeddings.npy'), embeddings)
 
-def load_embeddings(filename):
+def load_embeddings(model='none'):
+    filename = f'./cache/{model}_embeddings.npy'
     if os.path.exists(filename):
         return np.load(filename)
     return None
 
 def check_embeddings(model, abstracts):
-    if model is None:
-        return False
-    
+    cached_data = load_cache(model)
+    tmp_file = f'./cache/{model}_embeddings.npy'
+    if cached_data and os.path.exists(tmp_file):
+        saved_index = cached_data['index']
+        saved_abstract = cached_data['abstract']
+        
+        current_abstract = abstracts[saved_index]
+        if current_abstract == saved_abstract:
+            return True
+        else:
+            return False
+    return False
 
 def calculate_similarity_scores(abstract_embeddings, goal_embeddings):
     from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances

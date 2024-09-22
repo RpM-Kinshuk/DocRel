@@ -6,6 +6,7 @@ import requests
 import pandas as pd
 from utils.mailing import doc_mail
 from utils.sts import similarity_scores
+from utils.storage import save_data, load_data
 from flask import Flask, render_template, request, jsonify
 from utils.clean import clean_text, IgnoreSpecificLogsFilter
 
@@ -198,6 +199,16 @@ def fetch():
 
     # Save to CSV
     df.to_csv('scopus_results.csv', index=False)
+
+    # Save global variables to JSON
+    save_data({
+        'query': query,
+        'start_year': start_year,
+        'end_year': end_year,
+        'results_per_year': results_per_year,
+        'top_n': top_n,
+        'results': df.to_dict(orient='records')  # Save results as well
+    })
     
     progress = 100  # Set progress to 100% upon completion
     return jsonify({"message": f"Saved {len(df)} records to scopus_results.csv"})
@@ -218,10 +229,25 @@ def mail():
 @app.route('/send', methods=['POST'])
 def send():
     email = request.form['email']
-    for v in [email, query, start_year, end_year, results_per_year, top_n, results]:
+
+    # Load the stored variables
+    stored_data = load_data()
+
+    # Check if any required data is missing
+    for v in [email, stored_data.get('query'), stored_data.get('start_year'), 
+              stored_data.get('end_year'), stored_data.get('results_per_year'), 
+              stored_data.get('top_n'), stored_data.get('results')]:
         if v is None:
             return jsonify({'message': 'Please fetch data first!'})
-    doc_mail(email, query, start_year, end_year, results_per_year, top_n, results)
+
+    doc_mail(email, 
+              stored_data['query'], 
+              stored_data['start_year'], 
+              stored_data['end_year'], 
+              stored_data['results_per_year'], 
+              stored_data['top_n'], 
+              stored_data['results'])
+    
     return jsonify({'message': 'Mail sent successfully!'})
 
 if __name__ == '__main__':

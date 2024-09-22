@@ -37,8 +37,13 @@
     <button type="submit" class="btn-submit">Analyze</button>
 </form>
 <br> <br>
+
+<!-- Loading spinner above results -->
+<div id="loading" style="display: none; margin-bottom: 20px;">
+    <div class="loading-spinner"></div>
+</div>
+
 <div id="semantic-results"></div>
-<div id="loading" style="display: none;"></div>
 <button id="send-results" style="display: none;">Send Results</button>
 
 <script>
@@ -47,8 +52,10 @@
 
         // Show the loading spinner
         const loadingElement = document.getElementById('loading');
-        loadingElement.innerHTML = '<div class="loading-spinner"></div>'; // Add spinner
-        loadingElement.style.display = 'block';
+        loadingElement.style.display = 'block'; // Show spinner
+
+        const resultsContainer = document.getElementById('semantic-results');
+        resultsContainer.innerHTML = ''; // Clear previous results
 
         const formData = new FormData(event.target);
 
@@ -58,13 +65,10 @@
         })
             .then(response => response.json())
             .then(data => {
-                const resultsContainer = document.getElementById('semantic-results');
-                resultsContainer.innerHTML = ''; // Clear previous results
-
-                loadingElement.style.display = 'none';
+                loadingElement.style.display = 'none'; // Hide spinner
 
                 const results = data.results;
-                if (results.length > 0) { 
+                if (results.length > 0) {
                     const title = document.createElement('h2');
                     title.textContent = 'Results:';
                     resultsContainer.appendChild(title);
@@ -73,21 +77,19 @@
                         const card = document.createElement('div');
                         card.classList.add('result-card');
 
-                        // Create elements for each field you want to display
                         const titleElement = document.createElement('h3');
-                        titleElement.textContent = result['Title']; // or whatever your title column is
+                        titleElement.textContent = result['Title'];
 
                         const authorElement = document.createElement('p');
-                        authorElement.textContent = result['Authors']; // Adjust to your column name
+                        authorElement.textContent = result['Authors'];
 
                         const abstractElement = document.createElement('p');
-                        abstractElement.textContent = result['abstract']; // Adjust to your column name
+                        abstractElement.textContent = result['abstract'];
 
-                        // Create a link if you have a link column
                         const linkElement = document.createElement('a');
-                        linkElement.href = result['DOI']; // Adjust to your link column
-                        linkElement.textContent = 'View Full Text'; // Link text
-                        linkElement.target = '_blank'; // Open in a new tab
+                        linkElement.href = result['DOI'];
+                        linkElement.textContent = 'View Full Text';
+                        linkElement.target = '_blank';
 
                         card.appendChild(titleElement);
                         card.appendChild(authorElement);
@@ -95,13 +97,13 @@
                         card.appendChild(linkElement);
                         resultsContainer.appendChild(card);
                     });
+
                     const sendButton = document.getElementById('send-results');
                     sendButton.style.display = 'block';
                 } else {
                     resultsContainer.textContent = 'No results found';
                 }
             })
-
             .catch(error => {
                 console.error('Error:', error);
                 loadingElement.style.display = 'none'; // Hide spinner on error
@@ -111,7 +113,6 @@
     document.getElementById('send-results').addEventListener('click', function () {
         window.location.href = '/mail';
     });
-
 </script>
 
 {% endblock %}

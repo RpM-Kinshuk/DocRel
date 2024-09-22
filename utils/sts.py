@@ -3,7 +3,7 @@ from utils.embed import *
 import matplotlib.pyplot as plt
 from utils.util import calculate_similarity_scores
 
-sv = True
+sv = False
 disable_tqdm = True
 
 def save_scores(dataset, cos_sim_scores, euclid_sim_scores, model, sim_measure, top_n):

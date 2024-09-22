@@ -3,4 +3,6 @@ Code repository for DocRel, a Semantic Text Similarity search tool which can be 
 
 ![image](https://github.com/user-attachments/assets/0a731c8a-e61f-4df7-a899-1e41c263995b)
 
-![image](https://github.com/user-attachments/assets/4ce6b02f-6f9c-4cde-b449-5e7a42c5b152)
+![image](https://github.com/user-attachments/assets/2a61ed3e-7d80-4e7d-b81b-a29cd836194e)
+
+![image](https://github.com/user-attachments/assets/3e6e414f-774b-4c64-b2dd-9f7b846af120)

@@ -37,12 +37,19 @@ def get_results_for_year(keywords, year, results_per_year, total_years):
         'query': f'({query}) AND PUBYEAR = {year}',
         'count': min(25, results_per_year),  # Use 25 as the max per request
         'start': 0,
-        'sort': 'rowTotal'
+        'sort': 'rowTotal',
+        'view': 'COMPLETE',
     }
     
     while True:
         response = requests.get(BASE_URL, headers=HEADERS, params=params)
         # print(f"Request URL: {response.url}") 
+        if response.status_code == 401:
+            print("IP uthentication to Scopus failed. Please check the network.")
+            # delete the view key from params and retry
+            if 'view' in params:
+                del params['view']
+            continue
         if response.status_code != 200:
             print(f"Error: {response.status_code}")
             break
@@ -94,7 +101,7 @@ def get_abstract(doi, api_key, max_retries=3, backoff_factor=0.3):
                     if teaser:
                         return teaser
                     title = coredata.get('dc:title', 'No abstract or title available')
-                    return f"No abstract available. Title: {title}"
+                    return f"Title: {title}"
 
             elif response.status_code == 404:
                 print(f"DOI not found: {doi}")
@@ -149,7 +156,9 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
         df['DOI'] = df['prism:doi']
     if 'DOI' in df.columns:
         df['DOI'] = df['DOI'].apply(lambda x: f"https://doi.org/{x}")
-    if 'dc:creator' in df.columns:
+    if 'author' in df.columns:
+        df['Authors'] = df['author']
+    elif 'dc:creator' in df.columns:
         df['Authors'] = df['dc:creator']
     if 'Abstract' in df.columns:
         df['abstract'] = df['Abstract']
@@ -183,11 +192,19 @@ def fetch():
     # Convert results to DataFrame
     df = pd.DataFrame(all_results)
 
+    if 'dc:description' in df.columns:
+        df['abstract'] = df['dc:description']
+        df.drop(columns=['dc:description'], inplace=True)
+    else:
+        df['abstract'] = df['dc:title']
+
     # Get abstracts using DOIs, allocate 50% of progress to this
     total_records = len(df)
     for index, row in df.iterrows():
         doi = row.get('prism:doi', None)
-        if pd.notna(doi):
+        abs = row.get('abstract', None)
+        # check for empty abstracts
+        if abs is None and pd.notna(doi):
             df.at[index, 'abstract'] = get_abstract(doi, API_KEY)
         
         # Update progress

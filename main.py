@@ -195,7 +195,7 @@ def fetch():
     if 'dc:description' in df.columns:
         df['abstract'] = df['dc:description']
         df.drop(columns=['dc:description'], inplace=True)
-    else:
+    elif 'dc:title' in df.columns:
         df['abstract'] = df['dc:title']
 
     # Get abstracts using DOIs, allocate 50% of progress to this

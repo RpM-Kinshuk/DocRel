@@ -21,8 +21,12 @@ def save_scores(dataset, cos_sim_scores, euclid_sim_scores, model, sim_measure, 
 
 def similarity_scores(query, top_n, model, sim_measure):
     dataset = pd.read_csv('./scopus_results.csv')
-    abstracts = dataset['abstract'].astype(str).tolist()
-
+    if 'abstract' in dataset.columns:
+        abstracts = dataset['abstract'].astype(str).tolist()
+    elif 'Abstract' in dataset.columns:
+        abstracts = dataset['Abstract'].astype(str).tolist()
+    else:
+        raise ValueError('No abstract column found in dataset')
     abstract_embeddings, query_embedding = None, None
     if model == 'use':
         abstract_embeddings, query_embedding = use(abstracts, query, disable_tqdm)

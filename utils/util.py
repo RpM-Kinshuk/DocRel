@@ -36,7 +36,7 @@ def save_cache(abstracts, model='none'):
         }
 
         with open(cache_file, 'w') as f:
-            json.dump(cache_data, f)
+            json.dump(cache_data, f, indent=4)
     except Exception as e:
         print(e)
 

@@ -66,6 +66,7 @@ def check_embeddings(model, abstracts):
         
         current_abstract = abstracts[saved_index]
         if current_abstract == saved_abstract:
+            print(f'Using cached {model} embeddings')
             return True
         else:
             return False

@@ -73,6 +73,10 @@ def check_embeddings(model, abstracts):
 
 def calculate_similarity_scores(abstract_embeddings, goal_embeddings):
     from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+    if goal_embeddings.ndim == 1:
+        goal_embeddings = goal_embeddings.reshape(1, -1)
+    if abstract_embeddings.ndim == 1:
+        abstract_embeddings = abstract_embeddings.reshape(1, -1)
     euclid_sim_scores = euclidean_distances(abstract_embeddings, goal_embeddings)
     cos_sim_scores = cosine_similarity(abstract_embeddings, goal_embeddings)
     return cos_sim_scores, euclid_sim_scores

@@ -24,7 +24,7 @@ def save_cache(abstracts, model='none'):
 
         # Load existing cache or initialize a new one
         if os.path.exists(cache_file):
-            with open(cache_file, 'r') as f:
+            with open(cache_file, 'r', encoding='utf-8') as f:
                 cache_data = json.load(f)
         else:
             cache_data = {}
@@ -43,7 +43,7 @@ def save_cache(abstracts, model='none'):
 def load_cache(model='none'):
     cache_file = './cache/models_cache.json'
     if os.path.exists(cache_file):
-        with open(cache_file, 'r') as f:
+        with open(cache_file, 'r', encoding='utf-8') as f:
             cache_data = json.load(f)
             return cache_data.get(model, None)
     return None

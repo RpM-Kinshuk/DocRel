@@ -6,3 +6,8 @@ Code repository for DocRel, a Semantic Text Similarity search tool which can be 
 ![image](https://github.com/user-attachments/assets/2a61ed3e-7d80-4e7d-b81b-a29cd836194e)
 
 ![image](https://github.com/user-attachments/assets/3e6e414f-774b-4c64-b2dd-9f7b846af120)
+
+# Usage
+1. Clone the repository
+2. Install the requirements using `pip install -r requirements.txt`
+3. Run the app using `python main.py`

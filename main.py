@@ -253,6 +253,12 @@ def send():
         # Load the stored variables
         stored_data = load_data()
 
+        for v in ['keywords', 'start_year', 'end_year', 'results_per_year']:
+            if v not in stored_data or stored_data[v] is None:
+                stored_data[v] = 'Unknown'
+        if stored_data['keywords'].type == list:
+            stored_data['keywords'] = ', '.join(stored_data['keywords'])
+
         # Check if any required data is missing
         for v in [email, stored_data.get('query'), stored_data.get('start_year'), 
                   stored_data.get('end_year'), stored_data.get('results_per_year'), 
@@ -261,11 +267,14 @@ def send():
                 return jsonify({'message': 'Please fetch data first!'})
 
         doc_mail(email, 
-                  stored_data['query'], 
+                  stored_data['query'],
+                  stored_data['keywords'],
                   stored_data['start_year'], 
                   stored_data['end_year'], 
                   stored_data['results_per_year'], 
                   stored_data['top_n'], 
+                  stored_data['model'].upper(),
+                  stored_data['sim_measure'].capitalize(),
                   stored_data['results'])
 
         return jsonify({'message': 'Mail sent successfully!'})

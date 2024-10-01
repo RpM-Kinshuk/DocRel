@@ -8,8 +8,6 @@ import numpy as np
 DATA_FILE = 'data_storage.json'
 
 def save_data(data):
-    if not os.path.exists(os.path.dirname(DATA_FILE)):
-        os.makedirs(os.path.dirname(DATA_FILE))
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 

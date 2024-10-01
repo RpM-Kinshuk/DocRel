@@ -1,4 +1,4 @@
-def generate_mail(query, st_year, en_year, pubs, top_n, results):
+def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_measure, results):
     mail_content = f"""
         <html>
         <head>
@@ -53,10 +53,12 @@ def generate_mail(query, st_year, en_year, pubs, top_n, results):
         </head>
         <body>
             <div class="container">
-                <h2>Semantic Analysis Results</h2>
+                <h2>Semantic Similarity Analysis Results</h2>
                 <p><strong>Query:</strong> {query}</p>
+                <p><strong>Keywords:</strong> {keywords}</p>
                 <p><strong>Time frame:</strong> {st_year} - {en_year}</p>
                 <p><strong>Publications per year:</strong> {pubs}</p>
+                <p><strong>Model:</strong> {model} w/ {sim_measure} measure</p>
                 <p><strong>Top {top_n} results:</strong></p>
                 <table>
                     <thead>
@@ -81,10 +83,10 @@ def generate_mail(query, st_year, en_year, pubs, top_n, results):
                     <p>Thank you for using our service!</p>
                     <p>
                         Regards, 
-                        <a href="https://www.linkedin.com/in/kinshuk-goel/" target="_blank">Kinshuk Goel,</a>
-                        <a href="https://www.linkedin.com/in/avni-verma-975291230/" target="_blank">Avni Verma,</a>
+                        <a href="https://www.linkedin.com/in/kinshuk-goel/" target="_blank">Kinshuk Goel</a>
+                        <!-- <a href="https://www.linkedin.com/in/avni-verma-975291230/" target="_blank">Avni Verma,</a>
                         <a href="https://www.linkedin.com/in/priyanshitiwari02/" target="_blank">Priyanshi Tiwari</a> and
-                        <a href="https://www.linkedin.com/in/anubhav-bhattacharyya-26b1bb24a/" target="_blank">Anubhav Bhattacharyya</a>
+                        <a href="https://www.linkedin.com/in/anubhav-bhattacharyya-26b1bb24a/" target="_blank">Anubhav Bhattacharyya</a> -->
                         <br>Neural Archmages
                     </p>
                     <p><a href="mailto:archmages.neural@gmail.com">Mail us</a> or visit our <a href="https://github.com/RpM-Kinshuk/DocRel" target="_blank">GitHub page</a>.</p>

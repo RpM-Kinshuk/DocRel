@@ -22,15 +22,15 @@ def rnf_mail(email, rainfall):
     s.quit()
 
 
-def doc_mail(email, query, st_year, en_year, pubs, top_n, results):
+def doc_mail(email, query, keywords, st_year, en_year, pubs, top_n, model, sim_measure, results):
     message = EmailMessage()
     message['from'] = givesender()
     message['to'] = email
-    message['subject'] = "DocRel Result"
+    message['subject'] = "DocRel Results"
     # text_part = "\n\n\
     #     Hello, this is an automated message from the Rainfall Prediction Page!\n\n\t\tThe Predicted Rainfall is: {0:.2f} mm.\n\nRegards,\nKin and Bells :3\
     #         ".format(rainfall)
-    html_part = generate_mail(query, st_year, en_year, pubs, top_n, results)
+    html_part = generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_measure, results)
     message.set_content(f'''{html_part}''',subtype='html')
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()

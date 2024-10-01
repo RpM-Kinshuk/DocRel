@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import random
 import numpy as np
@@ -8,12 +9,31 @@ DATA_FILE = 'data_storage.json'
 
 def save_data(data):
     with open(DATA_FILE, 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 def load_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r') as f:
             return json.load(f)
+    return {}
+
+def modify_data(field_name, new_value):
+    data = load_data()
+    data[field_name] = new_value  # Add or modify the field
+    save_data(data)
+    return True  # Indicate that the field was added or modified
+
+def normalize_text(text):
+    # Remove special characters and convert to lowercase
+    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)  # Retain alphanumeric characters and spaces
+    return text.lower().strip()
+
+def load_cache():
+    cache_file = './cache/models_cache.json'
+    if os.path.exists(cache_file):
+        with open(cache_file, 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+            return cache_data
     return {}
 
 def save_cache(abstracts, model='none'):
@@ -22,31 +42,20 @@ def save_cache(abstracts, model='none'):
         index = random.randint(0, len(abstracts) - 1)
         abstract = abstracts[index]
 
-        # Load existing cache or initialize a new one
-        if os.path.exists(cache_file):
-            with open(cache_file, 'r', encoding='utf-8') as f:
-                cache_data = json.load(f)
-        else:
-            cache_data = {}
+        cache_data = load_cache()
 
         # Save the index and abstract for the current model
         cache_data[model] = {
             'index': index,
-            'abstract': abstract
+            'abstract': normalize_text(abstract)
         }
 
         with open(cache_file, 'w') as f:
             json.dump(cache_data, f, indent=4)
+        return True
     except Exception as e:
         print(e)
-
-def load_cache(model='none'):
-    cache_file = './cache/models_cache.json'
-    if os.path.exists(cache_file):
-        with open(cache_file, 'r', encoding='utf-8') as f:
-            cache_data = json.load(f)
-            return cache_data.get(model, None)
-    return None
+        return False
 
 def save_embeddings(embeddings, model='none'):
     np.save(os.path.join('./cache', f'{model}_embeddings.npy'), embeddings)
@@ -58,15 +67,20 @@ def load_embeddings(model='none'):
     return None
 
 def check_embeddings(model, abstracts):
-    cached_data = load_cache(model)
+    cached_data = load_cache().get(model, None)
+    # tmp_file = os.path.join(os.getcwd(), 'cache', f'{model}_embeddings.npy')
     tmp_file = f'./cache/{model}_embeddings.npy'
+
     if cached_data and os.path.exists(tmp_file):
         saved_index = cached_data['index']
         saved_abstract = cached_data['abstract']
         
-        current_abstract = abstracts[saved_index]
+        current_abstract = normalize_text(abstracts[saved_index])
+
+        print(f'\n\nCurrent: {current_abstract}\nSaved: {saved_abstract}\n\n')
+
         if current_abstract == saved_abstract:
-            print(f'Using cached {model} embeddings')
+            print(f'\n\nUsing cached {model} embeddings\n\n')
             return True
         else:
             return False

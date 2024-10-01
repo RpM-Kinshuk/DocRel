@@ -6,7 +6,7 @@ import requests
 import pandas as pd
 from utils.mailing import doc_mail
 from utils.sts import similarity_scores
-from utils.util import save_data, load_data
+from utils.util import save_data, load_data, modify_data
 from flask import Flask, render_template, request, jsonify
 from utils.clean import clean_text, IgnoreSpecificLogsFilter
 
@@ -20,13 +20,7 @@ HEADERS = {
 BASE_URL = 'https://api.elsevier.com/content/search/scopus'
 
 # Global variable to track progress
-results = None
 progress = 0
-top_n = 5
-start_year = 2024
-end_year = 2024
-results_per_year = 10
-query = 'machine learning'
 
 def get_results_for_year(keywords, year, results_per_year, total_years):
     global progress
@@ -133,20 +127,28 @@ def index():
 
 @app.route('/semantic', methods=['GET', 'POST'])
 def semantic():
-    global top_n, query
     if not os.path.exists('scopus_results.csv'):
         return jsonify({'message': 'Please fetch data first!'})
     if request.method == 'POST':
         query = str(request.form['query'])
+        modify_data('query', query)  # Update the stored query
+        
         selected_model = request.form['model']  # Get the selected model
-        top_n = request.form['top_n']  # Get the number of results to return
+        modify_data('model', selected_model)  # Update the stored model
+        
+        top_n = int(request.form['top_n'])  # Get the number of results to return
+        modify_data('top_n', top_n)  # Update the stored top_n
+        
         sim_measure = request.form['sim_measure']  # Get the similarity measure
-        top_results = perform_semantic_analysis(query, top_n, selected_model, sim_measure)
+        modify_data('sim_measure', sim_measure)
+        
+        top_results = perform_semantic_analysis(query, selected_model, top_n, sim_measure)
+        modify_data('results', top_results)  # Update the stored results
+        
         return jsonify({'results': top_results})
     return render_template('semantic.html')
 
-def perform_semantic_analysis(query, top_n, model, sim_measure):
-    global results
+def perform_semantic_analysis(query, model, top_n=5, sim_measure='cosine'): 
     df = similarity_scores(query, top_n, model, sim_measure)
     # Only keep 'abstract', 'Title' and 'Link' columns
     # check if dc:title is present, rename it to Title
@@ -175,7 +177,7 @@ def perform_semantic_analysis(query, top_n, model, sim_measure):
 
 @app.route('/fetch', methods=['POST'])
 def fetch():
-    global progress, start_year, end_year, results_per_year
+    global progress
     progress = 0  # Reset progress
 
     keywords = request.form['keywords'].split(',')
@@ -219,12 +221,11 @@ def fetch():
 
     # Save global variables to JSON
     save_data({
-        'query': query,
+        'keywords': keywords,
         'start_year': start_year,
         'end_year': end_year,
         'results_per_year': results_per_year,
-        'top_n': top_n,
-        'results': df.to_dict(orient='records')  # Save results as well
+        # 'records': df.to_dict(orient='records')  # Save results as well
     })
     
     progress = 100  # Set progress to 100% upon completion
@@ -245,27 +246,31 @@ def mail():
 
 @app.route('/send', methods=['POST'])
 def send():
-    email = request.form['email']
+    try:
+        global results
+        email = request.form['email']
 
-    # Load the stored variables
-    stored_data = load_data()
+        # Load the stored variables
+        stored_data = load_data()
 
-    # Check if any required data is missing
-    for v in [email, stored_data.get('query'), stored_data.get('start_year'), 
-              stored_data.get('end_year'), stored_data.get('results_per_year'), 
-              stored_data.get('top_n'), stored_data.get('results')]:
-        if v is None:
-            return jsonify({'message': 'Please fetch data first!'})
+        # Check if any required data is missing
+        for v in [email, stored_data.get('query'), stored_data.get('start_year'), 
+                  stored_data.get('end_year'), stored_data.get('results_per_year'), 
+                  stored_data.get('top_n'), stored_data.get('results')]:
+            if v is None:
+                return jsonify({'message': 'Please fetch data first!'})
 
-    doc_mail(email, 
-              stored_data['query'], 
-              stored_data['start_year'], 
-              stored_data['end_year'], 
-              stored_data['results_per_year'], 
-              stored_data['top_n'], 
-              stored_data['results'])
-    
-    return jsonify({'message': 'Mail sent successfully!'})
+        doc_mail(email, 
+                  stored_data['query'], 
+                  stored_data['start_year'], 
+                  stored_data['end_year'], 
+                  stored_data['results_per_year'], 
+                  stored_data['top_n'], 
+                  stored_data['results'])
+
+        return jsonify({'message': 'Mail sent successfully!'})
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'})
 
 if __name__ == '__main__':
     # Configure logging

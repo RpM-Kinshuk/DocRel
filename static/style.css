@@ -252,6 +252,7 @@ form {
     margin: 10px 0; /* Space between cards */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s; /* Animation on hover */
+    backdrop-filter: blur(10px); 
 }
 
 .result-card h3 {
@@ -269,7 +270,8 @@ form {
 }
 
 .result-card:hover {
-    transform: translateY(-3px); /* Lift effect on hover */
+    /*transform: translateY(-3px); /* Lift effect on hover */
+    transform: scale(1.02); /* Slightly enlarge on hover */
 }
 
 /* Title Styles */

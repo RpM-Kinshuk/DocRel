@@ -8,6 +8,8 @@ import numpy as np
 DATA_FILE = 'data_storage.json'
 
 def save_data(data):
+    if not os.path.exists(os.path.dirname(DATA_FILE)):
+        os.makedirs(os.path.dirname(DATA_FILE))
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
@@ -77,10 +79,8 @@ def check_embeddings(model, abstracts):
         
         current_abstract = normalize_text(abstracts[saved_index])
 
-        print(f'\n\nCurrent: {current_abstract}\nSaved: {saved_abstract}\n\n')
-
         if current_abstract == saved_abstract:
-            print(f'\n\nUsing cached {model} embeddings\n\n')
+            print(f'\nUsing cached {model} embeddings\n')
             return True
         else:
             return False

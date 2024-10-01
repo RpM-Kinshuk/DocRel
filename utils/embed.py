@@ -14,7 +14,7 @@ def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
     abstract_embeddings = []
 
     if check_embeddings('use', abstracts):
-        abstract_embeddings = load_embeddings('use_embeddings.npy')
+        abstract_embeddings = load_embeddings('use')
     else:
         batch_size = 100
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
@@ -25,7 +25,7 @@ def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
             abstract_embeddings.append(batch_embeddings)
 
         abstract_embeddings = np.vstack(abstract_embeddings)
-        save_embeddings(abstract_embeddings, 'use_embeddings.npy')
+        save_embeddings(abstract_embeddings, 'use')
         save_cache(abstracts, 'use')
 
     return abstract_embeddings, query_embedding
@@ -41,7 +41,7 @@ def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
     abstract_embeddings = []
 
     if check_embeddings('stf', abstracts):
-        abstract_embeddings = load_embeddings('stf_embeddings.npy')
+        abstract_embeddings = load_embeddings('stf')
     else:
         batch_size = 32
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
@@ -51,7 +51,7 @@ def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
             abstract_embeddings.append(batch_embeddings)
 
         abstract_embeddings = np.vstack(abstract_embeddings)
-        save_embeddings(abstract_embeddings, 'stf_embeddings.npy')
+        save_embeddings(abstract_embeddings, 'stf')
         save_cache(abstracts, 'stf')
     
     return abstract_embeddings, query_embedding
@@ -78,7 +78,7 @@ def fasttext(abstracts, query, disable_tqdm=True):
     abstract_embeddings = []
 
     if check_embeddings('fasttext', abstracts):
-        abstract_embeddings = load_embeddings('fasttext_embeddings.npy')
+        abstract_embeddings = load_embeddings('fasttext')
     else:
         batch_size = 100
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
@@ -88,7 +88,7 @@ def fasttext(abstracts, query, disable_tqdm=True):
             abstract_embeddings.append(batch_embeddings)
 
         abstract_embeddings = np.vstack(abstract_embeddings)
-        save_embeddings(abstract_embeddings, 'fasttext_embeddings.npy')
+        save_embeddings(abstract_embeddings, 'fasttext')
         save_cache(abstracts, 'fasttext')
 
     return abstract_embeddings, query_embedding
@@ -123,7 +123,7 @@ def glove(abstracts, query, disable_tqdm=True):
     abstract_embeddings = []
 
     if check_embeddings('glove', abstracts):
-        abstract_embeddings = load_embeddings('glove_embeddings.npy')
+        abstract_embeddings = load_embeddings('glove')
     else:
         batch_size = 100
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
@@ -133,7 +133,7 @@ def glove(abstracts, query, disable_tqdm=True):
             abstract_embeddings.append(batch_embeddings)
 
         abstract_embeddings = np.vstack(abstract_embeddings)
-        save_embeddings(abstract_embeddings, 'glove_embeddings.npy')
+        save_embeddings(abstract_embeddings, 'glove')
         save_cache(abstracts, 'glove')
 
     return abstract_embeddings, query_embedding
@@ -152,7 +152,7 @@ def elmo(abstracts, query, disable_tqdm=True):
     abstract_embeddings = []
 
     if check_embeddings('elmo', abstracts):
-        abstract_embeddings = load_embeddings('elmo_embeddings.npy')
+        abstract_embeddings = load_embeddings('elmo')
     else:
         batch_size = 100
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
@@ -162,7 +162,7 @@ def elmo(abstracts, query, disable_tqdm=True):
             abstract_embeddings.append(batch_embeddings)
 
         abstract_embeddings = np.vstack(abstract_embeddings)
-        save_embeddings(abstract_embeddings, 'elmo_embeddings.npy')
+        save_embeddings(abstract_embeddings, 'elmo')
         save_cache(abstracts, 'elmo')
         
     return abstract_embeddings, query_embedding

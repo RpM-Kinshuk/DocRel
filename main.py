@@ -170,7 +170,8 @@ def perform_semantic_analysis(query, model, top_n=5, sim_measure='cosine'):
             count += 1
     if count > 0.5 * len(df):
         df['abstract'] = ''
-    df = df[['Title', 'Authors', 'abstract', 'DOI']]
+    df['Similarity'] = df['Similarity'].apply(lambda x: f"{x:.4f}")
+    df = df[['Title', 'Authors', 'abstract', 'DOI', 'Similarity']]
     print(df['Authors'].head())
     results = df.to_dict(orient='records')
     return results
@@ -256,7 +257,7 @@ def send():
         for v in ['keywords', 'start_year', 'end_year', 'results_per_year']:
             if v not in stored_data or stored_data[v] is None:
                 stored_data[v] = 'Unknown'
-        if stored_data['keywords'].type == list:
+        if isinstance(stored_data['keywords'], list):
             stored_data['keywords'] = ', '.join(stored_data['keywords'])
 
         # Check if any required data is missing

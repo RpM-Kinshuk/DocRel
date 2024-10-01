@@ -91,10 +91,14 @@
                         linkElement.textContent = 'View Full Text';
                         linkElement.target = '_blank';
 
+                        const scoreElement = document.createElement('span');
+                        scoreElement.textContent = ' | Score: ' + result['Similarity'];
+
                         card.appendChild(titleElement);
                         card.appendChild(authorElement);
                         card.appendChild(abstractElement);
                         card.appendChild(linkElement);
+                        card.appendChild(scoreElement);
                         resultsContainer.appendChild(card);
                     });
 

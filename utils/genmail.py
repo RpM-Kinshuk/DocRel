@@ -58,7 +58,7 @@ def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_mea
                 <p><strong>Keywords:</strong> {keywords}</p>
                 <p><strong>Time frame:</strong> {st_year} - {en_year}</p>
                 <p><strong>Publications per year:</strong> {pubs}</p>
-                <p><strong>Model:</strong> {model} w/ {sim_measure} measure</p>
+                <p><strong>Model:</strong> {model} w/ {sim_measure} Measure</p>
                 <p><strong>Top {top_n} results:</strong></p>
                 <table>
                     <thead>
@@ -66,6 +66,7 @@ def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_mea
                             <th>Title</th>
                             <th>Authors</th>
                             <th>Abstract</th>
+                            <th>Score</th>
                             <th>DOI</th>
                         </tr>
                     </thead>
@@ -75,6 +76,7 @@ def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_mea
                             <td>{res['Title']}</td>
                             <td>{res['Authors']}</td>
                             <td>{res['abstract'][:100]}...</td>
+                            <td>{res['Similarity']}</td>
                             <td><a href="{res['DOI']}" target="_blank">Link</a></td>
                         </tr>''' for res in results])}
                     </tbody>

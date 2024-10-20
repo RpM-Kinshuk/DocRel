@@ -305,3 +305,23 @@ form {
     transform: scale(0.98); /* Slightly shrink button */
 }
 
+.profile-pic {
+    width: 100px;  /* Set the desired width */
+    height: 100px; /* Set the desired height */
+    border-radius: 30%; /* Makes the image circular */
+    margin-right: 10px; /* Space between the image and text */
+    vertical-align: middle; /* Aligns the image with the text */
+}
+
+/* Developer Profile Styles */
+.developer {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Vertically center the items */
+    margin-bottom: 20px; /* Space between profiles */
+}
+
+.developer img {
+    margin-right: 15px; /* Space between image and text */
+}
+
+

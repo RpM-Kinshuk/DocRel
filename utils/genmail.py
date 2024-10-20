@@ -66,7 +66,8 @@ def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_mea
                             <th>Title</th>
                             <th>Authors</th>
                             <th>Abstract</th>
-                            <th>Score</th>
+                            <th>{sim_measure} Score</th>
+                            <th>Keyword Overlap</th>
                             <th>DOI</th>
                         </tr>
                     </thead>
@@ -77,6 +78,7 @@ def generate_mail(query, keywords, st_year, en_year, pubs, top_n, model, sim_mea
                             <td>{res['Authors']}</td>
                             <td>{res['abstract'][:100]}...</td>
                             <td>{res['Similarity']}</td>
+                            <td>{res['Overlap']}%</td>
                             <td><a href="{res['DOI']}" target="_blank">Link</a></td>
                         </tr>''' for res in results])}
                     </tbody>

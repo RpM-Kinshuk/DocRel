@@ -1,16 +1,18 @@
 import pandas as pd
 from utils.embed import *
 import matplotlib.pyplot as plt
+from utils.util import calculate_overlap
 from utils.util import calculate_similarity_scores
 
 sv = False
 disable_tqdm = True
 
-def save_scores(dataset, cos_sim_scores, euclid_sim_scores, model, sim_measure, top_n):
+def save_scores(dataset, cos_sim_scores, euclid_sim_scores, keyword_overlaps, model, sim_measure, top_n):
     cos_scores_df = pd.DataFrame(cos_sim_scores, columns=[f'Similarity'])
     euclid_scores_df = pd.DataFrame(euclid_sim_scores, columns=[f'Similarity'])
-    cos_result_df = pd.concat([dataset, cos_scores_df], axis=1)
-    euclid_result_df = pd.concat([dataset, euclid_scores_df], axis=1)
+    overlap_df = pd.DataFrame(keyword_overlaps, columns=[f'Keyword Overlap'])
+    cos_result_df = pd.concat([dataset, cos_scores_df, overlap_df], axis=1)
+    euclid_result_df = pd.concat([dataset, euclid_scores_df, overlap_df], axis=1)
     if sv:
         cos_result_df.to_csv(f'./cache/{model}_cosine_scores.csv', index=False)
         euclid_result_df.to_csv(f'./cache/{model}_euclid_scores.csv', index=False)
@@ -42,5 +44,7 @@ def similarity_scores(query, top_n, model, sim_measure):
         raise ValueError('Invalid model selected')
     
     cos_sim_scores, euclid_sim_scores = calculate_similarity_scores(abstract_embeddings, query_embedding)
-    top_results = save_scores(dataset, cos_sim_scores, euclid_sim_scores, model, sim_measure, top_n)
+    keyword_overlaps = calculate_overlap(abstracts, query)
+
+    top_results = save_scores(dataset, cos_sim_scores, euclid_sim_scores, keyword_overlaps, model, sim_measure, top_n)
     return top_results

@@ -171,7 +171,8 @@ def perform_semantic_analysis(query, model, top_n=5, sim_measure='cosine'):
     if count > 0.5 * len(df):
         df['abstract'] = ''
     df['Similarity'] = df['Similarity'].apply(lambda x: f"{x:.4f}")
-    df = df[['Title', 'Authors', 'abstract', 'DOI', 'Similarity']]
+    df['Overlap'] = df['Keyword Overlap'].apply(lambda x: f"{x:.2f}")
+    df = df[['Title', 'Authors', 'abstract', 'DOI', 'Similarity', 'Overlap']]
     print(df['Authors'].head())
     results = df.to_dict(orient='records')
     return results

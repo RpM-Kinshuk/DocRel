@@ -94,11 +94,15 @@
                         const scoreElement = document.createElement('span');
                         scoreElement.textContent = ' | Score: ' + result['Similarity'];
 
+                        const overlapElement = document.createElement('span');
+                        overlapElement.textContent = ' | Keyword Overlap: ' + result['Overlap'] + '%';
+
                         card.appendChild(titleElement);
                         card.appendChild(authorElement);
                         card.appendChild(abstractElement);
                         card.appendChild(linkElement);
                         card.appendChild(scoreElement);
+                        card.appendChild(overlapElement);
                         resultsContainer.appendChild(card);
                     });
 

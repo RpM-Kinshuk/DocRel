@@ -102,3 +102,15 @@ def analyze_lengths(dataset):
     print('\nCharacter-wise')
     dataset['Abstract Length in Characters'] = dataset['abstract'].apply(lambda x: len(str(x)))
     print(dataset['Abstract Length in Characters'].describe())
+
+def calculate_overlap(abstracts, query):
+    query_keywords = set(query.lower().split())
+    total_query_keywords = len(query_keywords)
+    overlaps = []
+    for abstract in abstracts:
+        abstract_keywords = set(abstract.lower().split())
+        overlap_count = len(query_keywords.intersection(abstract_keywords))
+        # Calculate percentage overlap
+        percentage_overlap = (overlap_count / total_query_keywords) * 100 if total_query_keywords > 0 else 0
+        overlaps.append(percentage_overlap)
+    return overlaps

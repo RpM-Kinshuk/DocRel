@@ -1,3 +1,5 @@
+import dis
+import os
 import torch
 import numpy as np
 from tqdm.auto import tqdm
@@ -6,8 +8,14 @@ from utils.util import save_embeddings
 from utils.util import load_embeddings
 from utils.util import check_embeddings
 
-def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+tqdm_off = False
+cache_dir = f'{os.getcwd()}/cache/models'
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+
+def use(abstracts, query, disable_tqdm=tqdm_off, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
     import tensorflow_hub as hub
+    os.environ["TFHUB_CACHE_DIR"] = cache_dir
     use_model = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
     
     query_embedding = use_model([query]).numpy() # type: ignore
@@ -28,11 +36,14 @@ def use(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
         save_embeddings(abstract_embeddings, 'use')
         save_cache(abstracts, 'use')
 
+    # remove model from memory
+    del use_model
+    torch.cuda.empty_cache()
     return abstract_embeddings, query_embedding
 
-def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+def stf(abstracts, query, disable_tqdm=tqdm_off, device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
     from sentence_transformers import SentenceTransformer
-    stf_model = SentenceTransformer('paraphrase-MiniLM-L6-v2', device=device) # type: ignore
+    stf_model = SentenceTransformer('paraphrase-MiniLM-L6-v2', device=device, cache_folder=cache_dir) # type: ignore
     def get_stf_query_embedding(query):
         query_embedding = stf_model.encode(query, convert_to_tensor=True, device=device) # type: ignore
         return query_embedding.cpu().numpy()
@@ -54,9 +65,12 @@ def stf(abstracts, query, disable_tqdm=True, device = torch.device("cuda" if tor
         save_embeddings(abstract_embeddings, 'stf')
         save_cache(abstracts, 'stf')
     
+    stf_model.to('cpu')
+    del stf_model
+    torch.cuda.empty_cache()
     return abstract_embeddings, query_embedding
 
-def fasttext(abstracts, query, disable_tqdm=True):
+def fasttext(abstracts, query, disable_tqdm=tqdm_off):
     # import fasttext
     # fasttext.util.download_model('en', if_exists='ignore')  # English
     fasttext_model = fasttext.load_model('./cc.en.300.bin')
@@ -90,10 +104,12 @@ def fasttext(abstracts, query, disable_tqdm=True):
         abstract_embeddings = np.vstack(abstract_embeddings)
         save_embeddings(abstract_embeddings, 'fasttext')
         save_cache(abstracts, 'fasttext')
-
+    
+    del fasttext_model
+    torch.cuda.empty_cache()
     return abstract_embeddings, query_embedding
 
-def glove(abstracts, query, disable_tqdm=True):
+def glove(abstracts, query, disable_tqdm=tqdm_off):
     def load_glove_model(glove_file):
         print("Loading GloVe Model")
         glove_model = {}
@@ -136,11 +152,14 @@ def glove(abstracts, query, disable_tqdm=True):
         save_embeddings(abstract_embeddings, 'glove')
         save_cache(abstracts, 'glove')
 
+    del glove_model
+    torch.cuda.empty_cache()
     return abstract_embeddings, query_embedding
 
-def elmo(abstracts, query, disable_tqdm=True):
+def elmo(abstracts, query, disable_tqdm=tqdm_off):
     import tensorflow as tf
     import tensorflow_hub as hub
+    os.environ["TFHUB_CACHE_DIR"] = cache_dir
     elmo_model = hub.load("https://tfhub.dev/google/elmo/3")
     def get_elmo_embedding(texts):
         # embeddings = elmo_model.signatures['default'](tf.constant(texts))['elmo']
@@ -156,7 +175,7 @@ def elmo(abstracts, query, disable_tqdm=True):
     else:
         batch_size = 100
         n_batches = (len(abstracts) + batch_size - 1) // batch_size  # Ceiling division
-        for i in tqdm(range(n_batches), desc="Processing Summaries"):
+        for i in tqdm(range(n_batches), desc="Processing Summaries", disable=disable_tqdm):
             batch_summaries = abstracts[i * batch_size:(i + 1) * batch_size]
             batch_embeddings = get_elmo_embedding(batch_summaries)
             abstract_embeddings.append(batch_embeddings)
@@ -164,5 +183,7 @@ def elmo(abstracts, query, disable_tqdm=True):
         abstract_embeddings = np.vstack(abstract_embeddings)
         save_embeddings(abstract_embeddings, 'elmo')
         save_cache(abstracts, 'elmo')
-        
+
+    del elmo_model
+    torch.cuda.empty_cache()    
     return abstract_embeddings, query_embedding

@@ -318,10 +318,25 @@ form {
     display: flex; /* Use flexbox for layout */
     align-items: center; /* Vertically center the items */
     margin-bottom: 20px; /* Space between profiles */
+    transition: transform 0.2s ease; /* Smooth transition for the whole profile */
+}
+
+.developer:hover {
+    transform: scale(1.05); /* Slightly enlarge the entire profile on hover */
 }
 
 .developer img {
     margin-right: 15px; /* Space between image and text */
+    transition: transform 0.2s ease; /* Smooth transition for image */
 }
 
+.developer h2 a {
+    color: #333; /* Default text color */
+    text-decoration: none; /* Remove underline */
+    transition: color 0.2s ease; /* Smooth transition for color */
+}
+
+.developer h2 a:hover {
+    color: #007BFF; /* Change text color on hover */
+}
 

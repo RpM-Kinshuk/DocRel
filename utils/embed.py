@@ -1,6 +1,6 @@
-import dis
 import os
 import torch
+import fasttext
 import numpy as np
 from tqdm.auto import tqdm
 from utils.util import save_cache
@@ -70,10 +70,10 @@ def stf(abstracts, query, disable_tqdm=tqdm_off, device = torch.device("cuda" if
     torch.cuda.empty_cache()
     return abstract_embeddings, query_embedding
 
-def fasttext(abstracts, query, disable_tqdm=tqdm_off):
+def fstext(abstracts, query, disable_tqdm=tqdm_off):
     # import fasttext
     # fasttext.util.download_model('en', if_exists='ignore')  # English
-    fasttext_model = fasttext.load_model('./cc.en.300.bin')
+    fasttext_model = fasttext.load_model('cc.en.300.bin')
     def get_fasttext_embedding(text):
         global not_identified, count_not_indent, total_number
         words = text.split()

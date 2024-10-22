@@ -35,7 +35,7 @@ def similarity_scores(query, top_n, model, sim_measure):
     elif model == 'stf':
         abstract_embeddings, query_embedding = stf(abstracts, query, disable_tqdm)
     elif model == 'fasttext':
-        abstract_embeddings, query_embedding = fasttext(abstracts, query, disable_tqdm)
+        abstract_embeddings, query_embedding = fstext(abstracts, query, disable_tqdm)
     elif model == 'glove':
         abstract_embeddings, query_embedding = glove(abstracts, query, disable_tqdm)
     elif model == 'elmo':

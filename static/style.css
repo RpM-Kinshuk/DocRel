@@ -272,7 +272,7 @@ form {
 
 .result-card:hover {
     /*transform: translateY(-3px); /* Lift effect on hover */
-    transform: scale(1.02); /* Slightly enlarge on hover */
+    transform: scale(1.01); /* Slightly enlarge on hover */
 }
 
 /* Title Styles */

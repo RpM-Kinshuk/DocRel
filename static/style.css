@@ -252,8 +252,9 @@ form {
     padding: 15px;
     margin: 10px 0; /* Space between cards */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s; /* Animation on hover */
-    backdrop-filter: blur(10px); 
+    transition: transform 0.2s, box-shadow 0.2s; /* Animation on hover */
+    position: relative;
+    z-index: 1;
 }
 
 .result-card h3 {
@@ -271,8 +272,9 @@ form {
 }
 
 .result-card:hover {
-    /*transform: translateY(-3px); /* Lift effect on hover */
-    transform: scale(1.01); /* Slightly enlarge on hover */
+    transform: scale(1.04); /* Slightly enlarge on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    z-index: 2; /* Bring to front when hovered */
 }
 
 /* Title Styles */

@@ -74,14 +74,13 @@ def check_embeddings(model, abstracts):
     if cached_data and os.path.exists(tmp_file):
         saved_index = cached_data['index']
         saved_abstract = cached_data['abstract']
-        
+        if(len(abstracts) <= saved_index):
+            return False
         current_abstract = normalize_text(abstracts[saved_index])
 
         if current_abstract == saved_abstract:
             print(f'\nUsing cached {model} embeddings\n')
             return True
-        else:
-            return False
     return False
 
 def calculate_similarity_scores(abstract_embeddings, goal_embeddings):

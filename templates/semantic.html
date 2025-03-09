@@ -62,40 +62,69 @@
         fetch('/semantic', {
             method: 'POST',
             body: new URLSearchParams(formData)
-        })
-            .then(response => response.json())
+        }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text(); // Get as text first
+            })
+            .then(text => {
+                try {
+                    return JSON.parse(text); // Try to parse as JSON
+                } catch (e) {
+                    console.error("JSON Parse Error:", e);
+                    console.log("Raw response:", text);
+                    throw new Error('Invalid JSON response');
+                }
+            })
             .then(data => {
                 loadingElement.style.display = 'none'; // Hide spinner
 
-                const results = data.results;
+                const results = data.results || [];
                 if (results.length > 0) {
                     const title = document.createElement('h2');
                     title.textContent = 'Results:';
                     resultsContainer.appendChild(title);
 
                     results.forEach(result => {
+                        // Safe access to all properties
+                        result = result || {}; // Ensure result is an object
+
                         const card = document.createElement('div');
                         card.classList.add('result-card');
 
+                        // Title - Display "No Title" if missing
                         const titleElement = document.createElement('h3');
-                        titleElement.textContent = result['Title'];
+                        titleElement.textContent = result['Title'] || "No Title Available";
 
+                        // Authors - Only add if present
                         const authorElement = document.createElement('p');
-                        authorElement.textContent = result['Authors'];
+                        authorElement.textContent = result['Authors'] || "Authors not available";
 
+                        // Abstract - Only add if present
                         const abstractElement = document.createElement('p');
-                        abstractElement.textContent = result['abstract'];
+                        abstractElement.textContent = result['abstract'] || "No abstract available";
 
+                        // DOI/Link - Only add if present
                         const linkElement = document.createElement('a');
-                        linkElement.href = result['DOI'];
-                        linkElement.textContent = 'View Full Text';
-                        linkElement.target = '_blank';
+                        if (result['DOI']) {
+                            linkElement.href = result['DOI'];
+                            linkElement.textContent = 'View Full Text';
+                            linkElement.target = '_blank';
+                        } else {
+                            linkElement.textContent = 'No DOI available';
+                            linkElement.style.color = 'gray';
+                            linkElement.style.textDecoration = 'none';
+                            linkElement.style.cursor = 'default';
+                        }
 
+                        // Similarity Score - Only add if present
                         const scoreElement = document.createElement('span');
-                        scoreElement.textContent = ' | Score: ' + result['Similarity'];
+                        scoreElement.textContent = result['Similarity'] ? ` | Score: ${result['Similarity']}` : '';
 
+                        // Keyword Overlap - Only add if present
                         const overlapElement = document.createElement('span');
-                        overlapElement.textContent = ' | Keyword Overlap: ' + result['Overlap'] + '%';
+                        overlapElement.textContent = result['Overlap'] ? ` | Keyword Overlap: ${result['Overlap']}%` : '';
 
                         card.appendChild(titleElement);
                         card.appendChild(authorElement);
@@ -115,6 +144,7 @@
             .catch(error => {
                 console.error('Error:', error);
                 loadingElement.style.display = 'none'; // Hide spinner on error
+                resultsContainer.textContent = 'Error retrieving results: ' + error.message;
             });
     });
 
